@@ -14,7 +14,7 @@
 
     <artifactId>strongbox-cron-tasks</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
     <name>Strongbox: Cron Tasks</name>
 
