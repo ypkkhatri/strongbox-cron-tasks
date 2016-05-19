@@ -7,4 +7,5 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan({ "org.carlspring.strongbox.crontask" })
 public class CommonConfig
 {
+
 }

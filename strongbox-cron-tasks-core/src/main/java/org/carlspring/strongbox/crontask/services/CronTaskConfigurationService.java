@@ -1,24 +1,50 @@
 package org.carlspring.strongbox.crontask.services;
 
-import org.carlspring.strongbox.crontask.configuration.Configuration;
-import org.carlspring.strongbox.crontask.configuration.ConfigurationRepository;
+import org.carlspring.strongbox.crontask.configuration.CronTaskConfiguration;
+import org.carlspring.strongbox.crontask.configuration.CronTaskConfigurationRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class CronTaskConfigurationService
 {
+    private final Logger logger =
+            LoggerFactory.getLogger(CronTaskConfigurationService.class);
 
     @Autowired
-    private ConfigurationRepository configurationRepository;
+    private CronTaskConfigurationRepository cronTaskConfigurationRepository;
 
-    public void saveConfiguration(Configuration configuration)
+    public void saveConfiguration(CronTaskConfiguration cronTaskConfiguration)
     {
-        configurationRepository.updateConfiguration(configuration);
+        logger.info("CronTaskConfigurationService.saveConfiguration()");
+
+        cronTaskConfigurationRepository.updateConfiguration(cronTaskConfiguration);
     }
 
-    public Configuration getConfiguration()
+    public void deleteConfiguration(CronTaskConfiguration cronTaskConfiguration)
     {
-        return configurationRepository.getConfiguration();
+        logger.info("CronTaskConfigurationService.deleteConfiguration()");
+
+        cronTaskConfigurationRepository.deleteConfiguration(cronTaskConfiguration);
     }
+
+    public CronTaskConfiguration getConfiguration(String name)
+    {
+        logger.info("CronTaskConfigurationService.getConfiguration()");
+
+        return cronTaskConfigurationRepository.getConfiguration(name);
+    }
+
+    public List<CronTaskConfiguration> getConfigurations()
+    {
+        logger.info("CronTaskConfigurationService.getConfigurations()");
+
+        return cronTaskConfigurationRepository.getConfigurations();
+    }
+
+
 }

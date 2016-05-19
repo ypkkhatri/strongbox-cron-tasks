@@ -39,7 +39,7 @@ public class DbUtils
         }
     }
 
-    public static <R> void withDatabase(Consumer<OObjectDatabaseTx> code)
+    public static void withDatabase(Consumer<OObjectDatabaseTx> code)
     {
         // for simplicity use inmemory database
         // TODO Replace it with remote instance!
