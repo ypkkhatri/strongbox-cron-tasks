@@ -84,7 +84,7 @@ public class CronTaskRestlet
 
 
     @GET
-    @Path("/crontask/all")
+    @Path("/crontasks")
     @Produces(MediaType.APPLICATION_XML)
     public Response getConfigurations()
     {
