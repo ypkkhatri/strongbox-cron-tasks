@@ -56,6 +56,7 @@ public class CronTaskConfigurationRepository
 
         withDatabase(db -> {
             db.save(cronTaskConfiguration);
+            return true;
         });
     }
 
@@ -64,7 +65,7 @@ public class CronTaskConfigurationRepository
         logger.info("CronTaskConfigurationRepository.deleteConfiguration()");
 
         withDatabase(db -> {
-            db.delete(cronTaskConfiguration);
+            return db.delete(cronTaskConfiguration);
         });
     }
 
@@ -83,6 +84,7 @@ public class CronTaskConfigurationRepository
 
         withDatabase(db -> {
             db.getEntityManager().registerEntityClass(CronTaskConfiguration.class, true);
+            return true;
         });
     }
 }

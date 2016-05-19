@@ -39,32 +39,32 @@ public class DbUtils
         }
     }
 
-    public static void withDatabase(Consumer<OObjectDatabaseTx> code)
-    {
-        // for simplicity use inmemory database
-        // TODO Replace it with remote instance!
-        OObjectDatabaseTx db = new OObjectDatabaseTx("memory:crontasks");
-        try
-        {
-            if (db.exists())
-            {
-                ODatabaseRecordThreadLocal.INSTANCE.set(db.getUnderlying());
-                db.open("admin", "admin");
-            }
-            else
-            {
-                db.create();
-            }
-
-            code.accept(db);
-        }
-        finally
-        {
-/*            if (!db.isClosed())
-            {
-                db.close();
-            }*/
-        }
-    }
+//    public static void withDatabase(Consumer<OObjectDatabaseTx> code)
+//    {
+//        // for simplicity use inmemory database
+//        // TODO Replace it with remote instance!
+//        OObjectDatabaseTx db = new OObjectDatabaseTx("memory:crontasks");
+//        try
+//        {
+//            if (db.exists())
+//            {
+//                ODatabaseRecordThreadLocal.INSTANCE.set(db.getUnderlying());
+//                db.open("admin", "admin");
+//            }
+//            else
+//            {
+//                db.create();
+//            }
+//
+//            code.accept(db);
+//        }
+//        finally
+//        {
+///*            if (!db.isClosed())
+//            {
+//                db.close();
+//            }*/
+//        }
+//    }
 
 }
