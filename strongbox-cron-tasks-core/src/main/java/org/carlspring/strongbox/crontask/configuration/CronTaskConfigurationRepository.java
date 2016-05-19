@@ -30,7 +30,7 @@ public class CronTaskConfigurationRepository
 
         return withDatabase(db -> {
             List<CronTaskConfiguration> result =
-                    db.query(new OSQLSynchQuery<>("select * from Configuration"));
+                    db.query(new OSQLSynchQuery<>("select * from CronTaskConfiguration"));
 
             return result;
         });
@@ -42,7 +42,7 @@ public class CronTaskConfigurationRepository
 
         return withDatabase(db -> {
             List<CronTaskConfiguration> result =
-                    db.query(new OSQLSynchQuery<>("select * from Configuration where name = %s"), name);
+                    db.query(new OSQLSynchQuery<>("select * from CronTaskConfiguration where name = %s"), name);
             CronTaskConfiguration cronTaskConfiguration =
                     !result.isEmpty() ? Iterables.getLast(result) : null;
 
@@ -73,7 +73,7 @@ public class CronTaskConfigurationRepository
         logger.info("CronTaskConfigurationRepository.schemaExists()");
 
         return withDatabase(db -> {
-            return db.getMetadata().getSchema().existsClass("Configuration");
+            return db.getMetadata().getSchema().existsClass("CronTaskConfiguration");
         });
     }
 
