@@ -6,12 +6,28 @@ import java.util.Map;
 /**
  * @author Yougeshwar
  */
-public class Configuration
+public class CronTaskConfiguration
 {
+    private String name;
     private Map<String, Object> properties = new HashMap<>();
 
-    public Configuration()
+    public CronTaskConfiguration()
     {
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    public Map<String, Object> getProperties()
+    {
+        return properties;
     }
 
     public void addProperty(String key, Object value)
