@@ -31,6 +31,17 @@
         <url>http://www.carlspring.org/</url>
     </organization>
 
+    <developers>
+        <developer>
+            <name>Martin Todorov</name>
+            <email>carlspring@gmail.com</email>
+        </developer>
+        <developer>
+            <name>Yougeshwar Khatri</name>
+            <email>ypkkhatri@gmail.com</email>
+        </developer>
+    </developers>
+
     <properties>
         <version.guava>19.0</version.guava>
     </properties>
