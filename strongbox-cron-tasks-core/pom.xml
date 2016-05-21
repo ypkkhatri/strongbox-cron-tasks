@@ -80,6 +80,24 @@
     </build>
 
     <dependencies>
+        <dependency>
+            <groupId>org.carlspring.strongbox</groupId>
+            <artifactId>strongbox-commons</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.carlspring.maven</groupId>
+            <artifactId>maven-commons</artifactId>
+            <version>1.4-SNAPSHOT</version>
+            <exclusions>
+                <!-- Exclude Commons Logging -->
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
         <dependency>
             <groupId>com.orientechnologies</groupId>
@@ -94,16 +112,6 @@
             <artifactId>orientdb-object</artifactId>
         </dependency>
 
-        <!-- Logging -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jul-to-slf4j</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
@@ -115,10 +123,13 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
+            <exclusions>
+                <!-- Exclude Commons Logging -->
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -138,5 +149,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
 </project>
 

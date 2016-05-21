@@ -130,7 +130,6 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>build-helper-maven-plugin</artifactId>
-                        <version>1.10</version>
 
                         <executions>
                             <execution>
@@ -332,6 +331,8 @@
                         <artifactId>jetty-maven-plugin</artifactId>
 
                         <configuration>
+                            <scanIntervalSeconds>10</scanIntervalSeconds>
+
                             <daemon>true</daemon>
 
                             <webApp>
@@ -377,33 +378,20 @@
                                     <name>logging.config.file</name>
                                     <value>${dir.strongbox.home}/etc/logback.xml</value>
                                 </systemProperty>
+                                <systemProperty>
+                                    <name>logback.configurationFile</name>
+                                    <value>${dir.strongbox.home}/etc/logback.xml</value>
+                                </systemProperty>
                             </systemProperties>
 
+                            <useTestScope>true</useTestScope>
+
+                            <!-- Restore the following for SSL/HTTPSL when the time comes:
+                            <jettyXml>${dir.jetty.etc}/jetty.xml,${dir.jetty.etc}/jetty-http.xml,${dir.jetty.etc}/jetty-ssl.xml,${dir.jetty.etc}/jetty-https.xml</jettyXml>
+                            -->
+                            <jettyXml>${dir.jetty.etc}/jetty.xml,${dir.jetty.etc}/jetty-http.xml</jettyXml>
+                            <webAppSourceDirectory>${project.build.directory}/strongbox/webapp</webAppSourceDirectory>
                         </configuration>
-
-                        <!--executions>
-                            <execution>
-                                <id>jetty-stop</id>
-
-                                <phase>test</phase>
-                                <goals>
-                                    <goal>stop</goal>
-                                </goals>
-                            </execution>
-                        </executions-->
-
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.eclipse.jetty</groupId>
-                                <artifactId>jetty-util</artifactId>
-                                <version>${version.jetty}</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.eclipse.jetty</groupId>
-                                <artifactId>jetty-runner</artifactId>
-                                <version>${version.jetty}</version>
-                            </dependency>
-                        </dependencies>
                     </plugin>
 
                     <plugin>
@@ -437,7 +425,6 @@
                     <plugin>
                         <groupId>org.eclipse.jetty</groupId>
                         <artifactId>jetty-maven-plugin</artifactId>
-                        <version>${version.jetty}</version>
 
                         <configuration>
                             <daemon>true</daemon>
@@ -470,7 +457,6 @@
                     <plugin>
                         <groupId>org.eclipse.jetty</groupId>
                         <artifactId>jetty-maven-plugin</artifactId>
-                        <version>${version.jetty}</version>
 
                         <configuration>
                             <daemon>false</daemon>
@@ -491,5 +477,6 @@
             </build>
         </profile>
     </profiles>
+
 </project>
 
