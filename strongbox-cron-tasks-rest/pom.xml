@@ -406,6 +406,7 @@
                                 <strongbox.port>${strongbox.port}</strongbox.port>
                                 <logging.dir>${project.build.directory}/strongbox/logs</logging.dir>
                                 <logging.config.file>${project.build.directory}/strongbox/etc/logback.xml</logging.config.file>
+                                <logback.configurationFile>${dir.strongbox.home}/etc/logback.xml</logback.configurationFile>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>
