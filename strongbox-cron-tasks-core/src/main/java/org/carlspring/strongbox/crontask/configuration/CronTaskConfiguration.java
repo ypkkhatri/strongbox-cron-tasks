@@ -30,6 +30,11 @@ public class CronTaskConfiguration
         return properties;
     }
 
+    public void setProperties(Map<String, Object> properties)
+    {
+        this.properties = properties;
+    }
+
     public void addProperty(String key, Object value)
     {
         properties.put(key, value);

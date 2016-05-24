@@ -14,8 +14,8 @@ public class DbUtils
 {
     public static <R> R withDatabase(Function<OObjectDatabaseTx, R> code)
     {
-        // for simplicity use inmemory database
-        // TODO Replace it with remote instance!
+        // for simplicity use in memory database
+        // Replace it with remote instance!
         OObjectDatabaseTx db = new OObjectDatabaseTx("memory:crontasks");
         try
         {
