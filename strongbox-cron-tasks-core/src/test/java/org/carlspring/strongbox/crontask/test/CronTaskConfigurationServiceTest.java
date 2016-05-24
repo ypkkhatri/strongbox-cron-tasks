@@ -6,6 +6,7 @@ import org.carlspring.strongbox.crontask.services.CronTaskConfigurationService;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -18,7 +19,7 @@ import static org.junit.Assert.assertNull;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { CronTasksConfig.class })
 @TestExecutionListeners(listeners = { DependencyInjectionTestExecutionListener.class })
-@FixMethodOrder
+@FixMethodOrder(MethodSorters.JVM)
 public class CronTaskConfigurationServiceTest
 {
     @Autowired

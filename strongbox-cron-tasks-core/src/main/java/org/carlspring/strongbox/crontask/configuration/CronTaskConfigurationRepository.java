@@ -1,5 +1,6 @@
 package org.carlspring.strongbox.crontask.configuration;
 
+import com.google.common.collect.Iterables;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,7 @@ public class CronTaskConfigurationRepository
 
         return withDatabase(db -> {
             List<CronTaskConfiguration> result =
-                    db.query(new OSQLSynchQuery<CronTaskConfiguration>("SELECT * FROM CronTaskConfiguration WHERE name = '" + name + "'"), 1);
+                    db.query(new OSQLSynchQuery<CronTaskConfiguration>("SELECT * FROM CronTaskConfiguration WHERE name = '" + name + "'"));
             CronTaskConfiguration cronTaskConfiguration =
                     !result.isEmpty() ? result.get(0) : null;
 
