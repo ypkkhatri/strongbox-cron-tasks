@@ -1,3 +1,5 @@
+package org.carlspring.strongbox.crontask.test;
+
 import org.carlspring.strongbox.crontask.configuration.CronTaskConfiguration;
 import org.carlspring.strongbox.crontask.configuration.CronTasksConfig;
 import org.carlspring.strongbox.crontask.services.CronTaskConfigurationService;
@@ -6,13 +8,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { CronTasksConfig.class })
+@TestExecutionListeners(listeners = { DependencyInjectionTestExecutionListener.class })
 @FixMethodOrder
 public class CronTaskConfigurationServiceTest
 {
