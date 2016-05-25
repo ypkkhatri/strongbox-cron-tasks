@@ -4,6 +4,7 @@ import org.carlspring.strongbox.crontask.configuration.CronTaskConfiguration;
 import org.carlspring.strongbox.crontask.configuration.CronTasksConfig;
 import org.carlspring.strongbox.crontask.services.CronTaskConfigurationService;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -57,7 +58,7 @@ public class CronTaskConfigurationServiceTest
         cronTaskConfigurationService.saveConfiguration(cronTaskConfiguration);
     }
 
-
+    @Ignore
     @Test
     public void deleteConfig()
     {

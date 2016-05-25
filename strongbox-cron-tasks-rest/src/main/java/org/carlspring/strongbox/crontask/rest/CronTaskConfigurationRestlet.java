@@ -19,10 +19,10 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
-public class CronTaskRestlet
+public class CronTaskConfigurationRestlet
 {
 
-    private static final Logger logger = LoggerFactory.getLogger(CronTaskRestlet.class);
+    private static final Logger logger = LoggerFactory.getLogger(CronTaskConfigurationRestlet.class);
 
     @Autowired
     private CronTaskConfigurationService cronTaskConfigurationService;
