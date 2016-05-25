@@ -1,7 +1,9 @@
 package org.carlspring.strongbox.crontask.test;
 
 import org.carlspring.strongbox.crontask.configuration.CronTasksConfig;
+
 import org.junit.FixMethodOrder;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.test.context.ContextConfiguration;
@@ -15,4 +17,9 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 @FixMethodOrder(MethodSorters.JVM)
 public class CronTaskConfigurationRestletTest
 {
+
+    @Test
+    public void testFoo()
+    {
+    }
 }
