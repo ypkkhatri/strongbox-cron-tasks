@@ -75,7 +75,7 @@ public class CronTaskConfigurationRepository
         logger.info("CronTaskConfigurationRepository.deleteConfiguration()");
 
         withDatabase(db -> {
-            return db.command(new OCommandSQL("DELETE FROM CronTaskConfiguration WHERE id = '" + id + "'"));
+            return db.command(new OCommandSQL("DELETE FROM CronTaskConfiguration WHERE id = '" + id + "'")).execute();
         });
     }
 

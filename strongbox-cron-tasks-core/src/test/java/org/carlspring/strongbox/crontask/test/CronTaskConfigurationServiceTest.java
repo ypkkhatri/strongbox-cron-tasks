@@ -29,7 +29,14 @@ public class CronTaskConfigurationServiceTest
     private CronTaskConfigurationService cronTaskConfigurationService;
 
     @Test
-    public void testAddConfig()
+    public void testCronTaskConfiguration()
+    {
+        addConfig();
+        updateConfig();
+        deleteConfig();
+    }
+
+    public void addConfig()
     {
         String name = "Cron-Task-1";
         CronTaskConfiguration cronTaskConfiguration = new CronTaskConfiguration();
@@ -44,8 +51,7 @@ public class CronTaskConfigurationServiceTest
         assertNotNull(obj);
     }
 
-    @Test
-    public void testChangeConfig() // Update
+    public void updateConfig() // Update
     {
         String name = "Cron-Task-1";
         CronTaskConfiguration cronTaskConfiguration = cronTaskConfigurationService.getConfiguration(name);
@@ -60,8 +66,7 @@ public class CronTaskConfigurationServiceTest
         cronTaskConfigurationService.saveConfiguration(cronTaskConfiguration);
     }
 
-    @Test
-    public void testDeleteConfig()
+    public void deleteConfig()
     {
         String name = "Cron-Task-1";
         CronTaskConfiguration cronTaskConfiguration = cronTaskConfigurationService.getConfiguration(name);
