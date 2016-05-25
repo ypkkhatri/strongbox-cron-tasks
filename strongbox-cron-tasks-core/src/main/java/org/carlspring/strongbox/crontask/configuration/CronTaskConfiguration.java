@@ -1,5 +1,6 @@
 package org.carlspring.strongbox.crontask.configuration;
 
+import javax.persistence.Id;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,11 +9,18 @@ import java.util.Map;
  */
 public class CronTaskConfiguration
 {
+    @Id
+    private Object id;
     private String name;
     private Map<String, Object> properties = new HashMap<>();
 
     public CronTaskConfiguration()
     {
+    }
+
+    public Object getId()
+    {
+        return id;
     }
 
     public String getName()

@@ -32,6 +32,13 @@ public class CronTaskConfigurationService
         cronTaskConfigurationRepository.deleteConfiguration(cronTaskConfiguration);
     }
 
+    public void deleteConfiguration(Object id)
+    {
+        logger.info("CronTaskConfigurationService.deleteConfiguration()");
+
+        cronTaskConfigurationRepository.deleteConfiguration(id);
+    }
+
     public CronTaskConfiguration getConfiguration(String name)
     {
         logger.info("CronTaskConfigurationService.getConfiguration()");

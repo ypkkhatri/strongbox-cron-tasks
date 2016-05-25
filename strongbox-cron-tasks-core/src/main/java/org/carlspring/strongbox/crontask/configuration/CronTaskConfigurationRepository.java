@@ -1,6 +1,7 @@
 package org.carlspring.strongbox.crontask.configuration;
 
 import com.google.common.collect.Iterables;
+import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +67,15 @@ public class CronTaskConfigurationRepository
 
         withDatabase(db -> {
             return db.delete(cronTaskConfiguration);
+        });
+    }
+
+    public void deleteConfiguration(Object id)
+    {
+        logger.info("CronTaskConfigurationRepository.deleteConfiguration()");
+
+        withDatabase(db -> {
+            return db.command(new OCommandSQL("DELETE FROM CronTaskConfiguration WHERE id = '" + id + "'"));
         });
     }
 

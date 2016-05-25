@@ -3,6 +3,7 @@ package org.carlspring.strongbox.crontask.test;
 import org.carlspring.strongbox.crontask.configuration.CronTaskConfiguration;
 import org.carlspring.strongbox.crontask.configuration.CronTasksConfig;
 import org.carlspring.strongbox.crontask.services.CronTaskConfigurationService;
+
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -23,11 +24,12 @@ import static org.junit.Assert.assertNull;
 @FixMethodOrder(MethodSorters.JVM)
 public class CronTaskConfigurationServiceTest
 {
+
     @Autowired
     private CronTaskConfigurationService cronTaskConfigurationService;
 
     @Test
-    public void addConfig()
+    public void testAddConfig()
     {
         String name = "Cron-Task-1";
         CronTaskConfiguration cronTaskConfiguration = new CronTaskConfiguration();
@@ -43,7 +45,7 @@ public class CronTaskConfigurationServiceTest
     }
 
     @Test
-    public void updateConfig()
+    public void testChangeConfig() // Update
     {
         String name = "Cron-Task-1";
         CronTaskConfiguration cronTaskConfiguration = cronTaskConfigurationService.getConfiguration(name);
@@ -58,9 +60,8 @@ public class CronTaskConfigurationServiceTest
         cronTaskConfigurationService.saveConfiguration(cronTaskConfiguration);
     }
 
-    @Ignore
     @Test
-    public void deleteConfig()
+    public void testDeleteConfig()
     {
         String name = "Cron-Task-1";
         CronTaskConfiguration cronTaskConfiguration = cronTaskConfigurationService.getConfiguration(name);
