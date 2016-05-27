@@ -9,13 +9,14 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 /**
  * @author Yougeshwar
  */
-public class MyTask extends QuartzJobBean
+public class MyTask
+        extends QuartzJobBean
 {
     private final Logger logger =
             LoggerFactory.getLogger(MyTask.class);
     @Override
     protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException
     {
-        logger.info("My Core Task scheduled job");
+        logger.info("My Rest Task scheduled job");
     }
 }

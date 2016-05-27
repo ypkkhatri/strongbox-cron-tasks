@@ -1,5 +1,6 @@
 package org.carlspring.strongbox.crontask.rest;
 
+import org.carlspring.strongbox.crontask.CronTaskNotFoundException;
 import org.carlspring.strongbox.crontask.configuration.CronTaskConfiguration;
 import org.carlspring.strongbox.crontask.services.CronTaskConfigurationService;
 
@@ -9,6 +10,7 @@ import javax.ws.rs.core.Response;
 
 import java.util.List;
 
+import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
+@Path("/crontasks")
 public class CronTaskConfigurationRestlet
 {
 
@@ -29,11 +32,11 @@ public class CronTaskConfigurationRestlet
 
     @PUT
     @Path("/crontask")
-    @Produces(MediaType.TEXT_PLAIN)
     public Response saveConfiguration(@QueryParam("name") String name,
-                                      @QueryParam("key") String key,
-                                      @QueryParam("value") String value)
+                                      @QueryParam("jobClass") String jobClass,
+                                      @QueryParam("cronExpression") String cronExpression)
     {
+        logger.info("Save Cron Task config call");
         CronTaskConfiguration config = cronTaskConfigurationService.getConfiguration(name);
         if (config == null)
         {
@@ -41,16 +44,23 @@ public class CronTaskConfigurationRestlet
         }
 
         config.setName(name);
-//        config.addProperty(key, value);
+        config.setJobClass(jobClass);
+        config.setCronExpression("0 0/1 * 1/1 * ? *");
 
-        cronTaskConfigurationService.saveConfiguration(config);
+        try
+        {
+            cronTaskConfigurationService.saveConfiguration(config);
+        }
+        catch (ClassNotFoundException | SchedulerException ex)
+        {
+            return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
+        }
 
-        return Response.ok("The cron task configuration was saved successfully.").build();
+        return Response.ok().build();
     }
 
     @DELETE
     @Path("/crontask")
-    @Produces(MediaType.TEXT_PLAIN)
     public Response deleteConfiguration(@QueryParam("name") String name)
     {
         CronTaskConfiguration config = cronTaskConfigurationService.getConfiguration(name);
@@ -61,9 +71,16 @@ public class CronTaskConfigurationRestlet
                            .build();
         }
 
-        cronTaskConfigurationService.deleteConfiguration(config);
+        try
+        {
+            cronTaskConfigurationService.deleteConfiguration(config);
+        }
+        catch (ClassNotFoundException | SchedulerException | CronTaskNotFoundException ex)
+        {
+            return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
+        }
 
-        return Response.ok("The cron task configuration was deleted successfully.").build();
+        return Response.ok().build();
     }
 
     @GET
@@ -75,13 +92,12 @@ public class CronTaskConfigurationRestlet
         if (config == null)
         {
             return Response.status(Response.Status.BAD_REQUEST)
-                           .entity("Configuration not found by this name!")
+                           .entity("Cron task config not found by this name!")
                            .build();
         }
 
         return Response.ok(config).build();
     }
-
 
     @GET
     @Path("/crontasks")
@@ -92,12 +108,11 @@ public class CronTaskConfigurationRestlet
         if (configList == null || configList.isEmpty())
         {
             return Response.status(Response.Status.BAD_REQUEST)
-                           .entity("There are no configurations")
+                           .entity("There are no cron task configs")
                            .build();
         }
 
         return Response.ok(configList).build();
     }
-
 
 }

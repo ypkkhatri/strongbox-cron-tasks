@@ -1,8 +1,11 @@
 package org.carlspring.strongbox.crontask.services;
 
+import org.carlspring.strongbox.crontask.CronTaskNotFoundException;
 import org.carlspring.strongbox.crontask.configuration.CronTaskConfiguration;
 import org.carlspring.strongbox.crontask.configuration.CronTaskConfigurationRepository;
 import org.carlspring.strongbox.crontask.quartz.CronJobSchedulerService;
+
+import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +16,7 @@ import java.util.List;
 @Service
 public class CronTaskConfigurationService
 {
+
     private final Logger logger =
             LoggerFactory.getLogger(CronTaskConfigurationService.class);
 
@@ -23,32 +27,21 @@ public class CronTaskConfigurationService
     private CronJobSchedulerService cronJobSchedulerService;
 
     public void saveConfiguration(CronTaskConfiguration cronTaskConfiguration)
+            throws ClassNotFoundException, SchedulerException
     {
         logger.info("CronTaskConfigurationService.saveConfiguration()");
 
         cronTaskConfigurationRepository.updateConfiguration(cronTaskConfiguration);
-        try
-        {
-            cronJobSchedulerService.scheduleJob(cronTaskConfiguration);
-        }
-        catch (ClassNotFoundException e)
-        {
-            e.printStackTrace();
-        }
+        cronJobSchedulerService.scheduleJob(cronTaskConfiguration);
     }
 
     public void deleteConfiguration(CronTaskConfiguration cronTaskConfiguration)
+            throws SchedulerException, CronTaskNotFoundException, ClassNotFoundException
     {
         logger.info("CronTaskConfigurationService.deleteConfiguration()");
 
         cronTaskConfigurationRepository.deleteConfiguration(cronTaskConfiguration);
-    }
-
-    public void deleteConfiguration(Object id)
-    {
-        logger.info("CronTaskConfigurationService.deleteConfiguration()");
-
-        cronTaskConfigurationRepository.deleteConfiguration(id);
+        cronJobSchedulerService.deleteJob(cronTaskConfiguration);
     }
 
     public CronTaskConfiguration getConfiguration(String name)

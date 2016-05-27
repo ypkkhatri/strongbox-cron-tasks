@@ -1,8 +1,6 @@
 package org.carlspring.strongbox.crontask.configuration;
 
 import javax.persistence.Id;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Yougeshwar
@@ -12,7 +10,7 @@ public class CronTaskConfiguration
     @Id
     private Object id;
     private String name;
-    private String className;
+    private String jobClass;
     private String cronExpression;
 
     public CronTaskConfiguration()
@@ -34,14 +32,14 @@ public class CronTaskConfiguration
         this.name = name;
     }
 
-    public String getClassName()
+    public String getJobClass()
     {
-        return className;
+        return jobClass;
     }
 
-    public void setClassName(String className)
+    public void setJobClass(String jobClass)
     {
-        this.className = className;
+        this.jobClass = jobClass;
     }
 
     public String getCronExpression()
