@@ -12,7 +12,8 @@ public class CronTaskConfiguration
     @Id
     private Object id;
     private String name;
-    private Map<String, Object> properties = new HashMap<>();
+    private String className;
+    private String cronExpression;
 
     public CronTaskConfiguration()
     {
@@ -33,28 +34,48 @@ public class CronTaskConfiguration
         this.name = name;
     }
 
-    public Map<String, Object> getProperties()
+    public String getClassName()
     {
-        return properties;
+        return className;
     }
 
-    public void setProperties(Map<String, Object> properties)
+    public void setClassName(String className)
     {
-        this.properties = properties;
+        this.className = className;
     }
 
-    public void addProperty(String key, Object value)
+    public String getCronExpression()
     {
-        properties.put(key, value);
+        return cronExpression;
     }
 
-    public Object getProperty(String key)
+    public void setCronExpression(String cronExpression)
     {
-        return properties.get(key);
+        this.cronExpression = cronExpression;
     }
 
-    public Object removeProperty(String key)
-    {
-        return properties.remove(key);
-    }
+    //    public Map<String, Object> getProperties()
+//    {
+//        return properties;
+//    }
+//
+//    public void setProperties(Map<String, Object> properties)
+//    {
+//        this.properties = properties;
+//    }
+//
+//    public void addProperty(String key, Object value)
+//    {
+//        properties.put(key, value);
+//    }
+//
+//    public Object getProperty(String key)
+//    {
+//        return properties.get(key);
+//    }
+//
+//    public Object removeProperty(String key)
+//    {
+//        return properties.remove(key);
+//    }
 }

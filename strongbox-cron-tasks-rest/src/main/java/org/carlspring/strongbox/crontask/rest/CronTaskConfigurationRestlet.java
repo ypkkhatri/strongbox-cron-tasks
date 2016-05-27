@@ -41,7 +41,7 @@ public class CronTaskConfigurationRestlet
         }
 
         config.setName(name);
-        config.addProperty(key, value);
+//        config.addProperty(key, value);
 
         cronTaskConfigurationService.saveConfiguration(config);
 

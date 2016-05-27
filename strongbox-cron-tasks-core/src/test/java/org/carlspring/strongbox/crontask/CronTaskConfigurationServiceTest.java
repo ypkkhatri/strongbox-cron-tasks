@@ -1,9 +1,10 @@
-package org.carlspring.strongbox.crontask.test;
+package org.carlspring.strongbox.crontask;
 
 import org.carlspring.strongbox.crontask.configuration.CronTaskConfiguration;
 import org.carlspring.strongbox.crontask.configuration.CronTasksConfig;
 import org.carlspring.strongbox.crontask.services.CronTaskConfigurationService;
 
+import org.carlspring.strongbox.crontask.test.MyTask;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -32,8 +33,8 @@ public class CronTaskConfigurationServiceTest
     public void testCronTaskConfiguration()
     {
         addConfig();
-        updateConfig();
-        deleteConfig();
+//        updateConfig();
+//        deleteConfig();
     }
 
     public void addConfig()
@@ -41,9 +42,8 @@ public class CronTaskConfigurationServiceTest
         String name = "Cron-Task-1";
         CronTaskConfiguration cronTaskConfiguration = new CronTaskConfiguration();
         cronTaskConfiguration.setName(name);
-        cronTaskConfiguration.addProperty("JobDetailBean", "org.springframework.scheduling.quartz.JobDetailBean");
-        cronTaskConfiguration.addProperty("CronTriggerBean", "org.springframework.scheduling.quartz.CronTriggerBean");
-        cronTaskConfiguration.addProperty("cronExpression", "0 0 0/1 1/1 * ? *");
+        cronTaskConfiguration.setClassName(MyTask.class.getName());
+        cronTaskConfiguration.setCronExpression("0 0/1 * 1/1 * ? *");
 
         cronTaskConfigurationService.saveConfiguration(cronTaskConfiguration);
 
@@ -58,10 +58,8 @@ public class CronTaskConfigurationServiceTest
 
         assertNotNull(cronTaskConfiguration);
 
-        cronTaskConfiguration.addProperty("JobDetailBean", "org.springframework.scheduling.quartz.JobDetailBeanNew");
-        cronTaskConfiguration.addProperty("CronTriggerBean",
-                                          "org.springframework.scheduling.quartz.CronTriggerBeanNew");
-        cronTaskConfiguration.addProperty("cronExpression", "0 0 0/1 1/1 2 0 1");
+        cronTaskConfiguration.setClassName("org.springframework.scheduling.quartz.JobDetailBeanNew");
+        cronTaskConfiguration.setCronExpression("0 0 0/1 1/1 2 0 1");
 
         cronTaskConfigurationService.saveConfiguration(cronTaskConfiguration);
     }

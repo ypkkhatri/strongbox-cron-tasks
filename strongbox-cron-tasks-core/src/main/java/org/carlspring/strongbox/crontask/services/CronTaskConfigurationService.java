@@ -2,6 +2,7 @@ package org.carlspring.strongbox.crontask.services;
 
 import org.carlspring.strongbox.crontask.configuration.CronTaskConfiguration;
 import org.carlspring.strongbox.crontask.configuration.CronTaskConfigurationRepository;
+import org.carlspring.strongbox.crontask.quartz.CronJobSchedulerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +19,22 @@ public class CronTaskConfigurationService
     @Autowired
     private CronTaskConfigurationRepository cronTaskConfigurationRepository;
 
+    @Autowired
+    private CronJobSchedulerService cronJobSchedulerService;
+
     public void saveConfiguration(CronTaskConfiguration cronTaskConfiguration)
     {
         logger.info("CronTaskConfigurationService.saveConfiguration()");
 
         cronTaskConfigurationRepository.updateConfiguration(cronTaskConfiguration);
+        try
+        {
+            cronJobSchedulerService.scheduleJob(cronTaskConfiguration);
+        }
+        catch (ClassNotFoundException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     public void deleteConfiguration(CronTaskConfiguration cronTaskConfiguration)
