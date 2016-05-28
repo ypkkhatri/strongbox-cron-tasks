@@ -7,8 +7,12 @@ import javax.persistence.Id;
  */
 public class CronTaskConfiguration
 {
+    /**
+     * RID: #<cluster-id>:<cluster-position>
+     * */
     @Id
     private Object id;
+
     private String name;
     private String jobClass;
     private String cronExpression;

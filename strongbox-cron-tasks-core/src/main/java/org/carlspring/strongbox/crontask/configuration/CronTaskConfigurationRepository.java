@@ -54,9 +54,9 @@ public class CronTaskConfigurationRepository
         });
     }
 
-    public void updateConfiguration(CronTaskConfiguration cronTaskConfiguration)
+    public void saveConfiguration(CronTaskConfiguration cronTaskConfiguration)
     {
-        logger.info("CronTaskConfigurationRepository.updateConfiguration()");
+        logger.info("CronTaskConfigurationRepository.saveConfiguration()");
 
         withDatabase(db -> {
             db.save(cronTaskConfiguration);

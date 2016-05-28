@@ -31,7 +31,7 @@ public class CronTaskConfigurationService
     {
         logger.info("CronTaskConfigurationService.saveConfiguration()");
 
-        cronTaskConfigurationRepository.updateConfiguration(cronTaskConfiguration);
+        cronTaskConfigurationRepository.saveConfiguration(cronTaskConfiguration);
         cronJobSchedulerService.scheduleJob(cronTaskConfiguration);
     }
 

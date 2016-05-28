@@ -10,6 +10,7 @@ import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import org.junit.After;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -34,24 +35,36 @@ public class CronTaskConfigurationRestletTest
 
     protected TestClient client;
 
+    private final String cronName = "CRJ001";
+
     @Test
     public void testCronTaskConfiguration()
             throws ClassNotFoundException, SchedulerException, CronTaskNotFoundException, UnsupportedEncodingException
     {
+        client = TestClient.getTestInstance();
         saveConfig("0 0/1 * 1/1 * ? *");
 //        saveConfig("0 0 12 1/1 * ? *");
-//        deleteConfig();
+        deleteConfig();
+    }
+
+    @After
+    public void tearDown()
+            throws Exception
+    {
+        if (client != null)
+        {
+            client.close();
+        }
     }
 
     public void saveConfig(String cronExpression)
             throws UnsupportedEncodingException
     {
         logger.info("Cron Expression: " + cronExpression);
-        client = TestClient.getTestInstance();
 
         String path = client.getContextBaseUrl() +
                       "/configuration/crontasks/crontask?" +
-                      "name=CRJ001&" +
+                      "name=" + cronName + "&" +
                       "jobClass=org.carlspring.strongbox.crontask.test.MyTask&" +
                       "cronExpression=" + URLEncoder.encode(cronExpression, "UTF-8");
 
@@ -66,10 +79,10 @@ public class CronTaskConfigurationRestletTest
 
         String url = client.getContextBaseUrl() +
                      "/configuration/crontasks/crontask?" +
-                     "name=CRJ001";
+                     "name=" + cronName;
         resource = client.getClientInstance().target(url);
 
-        response = resource.request(MediaType.APPLICATION_XML).get();
+        response = resource.request(MediaType.APPLICATION_JSON).get();
 
         status = response.getStatus();
 
@@ -78,25 +91,22 @@ public class CronTaskConfigurationRestletTest
 
     public void deleteConfig()
     {
-        client = TestClient.getTestInstance();
-
-        String path = client.getContextBaseUrl() +
-                      "/configuration/crontasks/crontask?" +
-                      "name=CRJ001";
+        String path = "/configuration/crontasks/crontask?" +
+                      "name=" + cronName;
 
         Response response = client.delete(path);
         assertEquals("Failed to delete job!", Response.ok().build().getStatus(), response.getStatus());
 
         String url = client.getContextBaseUrl() +
                      "/configuration/crontasks/crontask?" +
-                     "name=CRJ001";
+                     "name=" + cronName;
         WebTarget resource = client.getClientInstance().target(url);
 
-        response = resource.request(MediaType.APPLICATION_XML).get();
+        response = resource.request(MediaType.APPLICATION_JSON).get();
 
         int status = response.getStatus();
 
-        assertEquals("Get cron task config!", Response.ok(Response.Status.BAD_REQUEST).build().getStatus(), status);
+        assertEquals("Cron task config exists!", Response.status(Response.Status.BAD_REQUEST).build().getStatus(), status);
     }
 
 }

@@ -85,7 +85,7 @@ public class CronTaskConfigurationRestlet
 
     @GET
     @Path("/crontask")
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getConfiguration(@QueryParam("name") String name)
     {
         CronTaskConfiguration config = cronTaskConfigurationService.getConfiguration(name);
@@ -101,7 +101,7 @@ public class CronTaskConfigurationRestlet
 
     @GET
     @Path("/crontasks")
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getConfigurations()
     {
         List<CronTaskConfiguration> configList = cronTaskConfigurationService.getConfigurations();
