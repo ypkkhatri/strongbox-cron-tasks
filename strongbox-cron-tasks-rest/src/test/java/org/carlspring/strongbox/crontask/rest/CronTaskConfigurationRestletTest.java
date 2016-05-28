@@ -50,7 +50,7 @@ public class CronTaskConfigurationRestletTest
         client = TestClient.getTestInstance();
 
         String path = client.getContextBaseUrl() +
-                      "/crontasks/crontask?" +
+                      "/configuration/crontasks/crontask?" +
                       "name=CRJ001&" +
                       "jobClass=org.carlspring.strongbox.crontask.test.MyTask&" +
                       "cronExpression=" + URLEncoder.encode(cronExpression, "UTF-8");
@@ -65,7 +65,7 @@ public class CronTaskConfigurationRestletTest
         assertEquals("Failed to schedule job!", Response.ok().build().getStatus(), status);
 
         String url = client.getContextBaseUrl() +
-                     "/crontasks/crontask?" +
+                     "/configuration/crontasks/crontask?" +
                      "name=CRJ001";
         resource = client.getClientInstance().target(url);
 
@@ -81,14 +81,14 @@ public class CronTaskConfigurationRestletTest
         client = TestClient.getTestInstance();
 
         String path = client.getContextBaseUrl() +
-                      "/crontasks/crontask?" +
+                      "/configuration/crontasks/crontask?" +
                       "name=CRJ001";
 
         Response response = client.delete(path);
         assertEquals("Failed to delete job!", Response.ok().build().getStatus(), response.getStatus());
 
         String url = client.getContextBaseUrl() +
-                     "/crontasks/crontask?" +
+                     "/configuration/crontasks/crontask?" +
                      "name=CRJ001";
         WebTarget resource = client.getClientInstance().target(url);
 
@@ -98,4 +98,5 @@ public class CronTaskConfigurationRestletTest
 
         assertEquals("Get cron task config!", Response.ok(Response.Status.BAD_REQUEST).build().getStatus(), status);
     }
+
 }

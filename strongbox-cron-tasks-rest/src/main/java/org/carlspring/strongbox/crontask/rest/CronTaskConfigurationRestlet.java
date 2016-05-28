@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
-@Path("/crontasks")
+@Path("/configuration/crontasks")
 public class CronTaskConfigurationRestlet
 {
 
