@@ -1,5 +1,6 @@
 package org.carlspring.strongbox.crontask.rest;
 
+import org.carlspring.strongbox.crontask.exceptions.CronTaskException;
 import org.carlspring.strongbox.crontask.exceptions.CronTaskNotFoundException;
 import org.carlspring.strongbox.crontask.configuration.CronTaskConfiguration;
 import org.carlspring.strongbox.crontask.services.CronTaskConfigurationService;
@@ -51,7 +52,7 @@ public class CronTaskConfigurationRestlet
         {
             cronTaskConfigurationService.saveConfiguration(config);
         }
-        catch (ClassNotFoundException | SchedulerException ex)
+        catch (ClassNotFoundException | SchedulerException | CronTaskException ex)
         {
             return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
         }
