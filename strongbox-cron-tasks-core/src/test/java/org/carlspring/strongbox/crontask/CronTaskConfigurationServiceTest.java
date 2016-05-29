@@ -53,8 +53,8 @@ public class CronTaskConfigurationServiceTest
         String name = "Cron-Task-1";
         CronTaskConfiguration cronTaskConfiguration = new CronTaskConfiguration();
         cronTaskConfiguration.setName(name);
-        cronTaskConfiguration.setJobClass(MyTask.class.getName());
-        cronTaskConfiguration.setCronExpression("0 0/1 * 1/1 * ? *");
+        cronTaskConfiguration.addProperty("jobClass", MyTask.class.getName());
+        cronTaskConfiguration.addProperty("cronExpression", "0 0/1 * 1/1 * ? *");
 
         cronTaskConfigurationService.saveConfiguration(cronTaskConfiguration);
 
@@ -74,7 +74,7 @@ public class CronTaskConfigurationServiceTest
 
         assertNotNull(cronTaskConfiguration);
 
-        cronTaskConfiguration.setCronExpression("0 0 12 1/1 * ? *");
+        cronTaskConfiguration.addProperty("cronExpression", "0 0 12 1/1 * ? *");
 
         cronTaskConfigurationService.saveConfiguration(cronTaskConfiguration);
     }

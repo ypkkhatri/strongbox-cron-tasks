@@ -2,14 +2,22 @@ package org.carlspring.strongbox.crontask.rest;
 
 import org.carlspring.strongbox.crontask.exceptions.CronTaskNotFoundException;
 import org.carlspring.strongbox.crontask.configuration.CronTasksConfig;
+import org.carlspring.strongbox.crontask.test.MyTask;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.fasterxml.jackson.databind.util.JSONWrappedObject;
+import org.codehaus.jettison.json.JSONObject;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,7 +47,7 @@ public class CronTaskConfigurationRestletTest
             throws ClassNotFoundException, SchedulerException, CronTaskNotFoundException, UnsupportedEncodingException
     {
         client = TestClient.getTestInstance();
-        saveConfig("0 0/1 * 1/1 * ? *");
+        saveJavaConfig("0 0/1 * 1/1 * ? *");
 //        saveConfig("0 0 12 1/1 * ? *");
         deleteConfig();
     }
@@ -54,21 +62,25 @@ public class CronTaskConfigurationRestletTest
         }
     }
 
-    public void saveConfig(String cronExpression)
+    public void saveJavaConfig(String cronExpression)
             throws UnsupportedEncodingException
     {
         logger.info("Cron Expression: " + cronExpression);
 
+//        String path = client.getContextBaseUrl() +
+//                      "/configuration/crontasks/crontask?" +
+//                      "name=" + cronName + "&" +
+//                      "jobClass=org.carlspring.strongbox.crontask.test.MyTask&" +
+//                      "cronExpression=" + URLEncoder.encode(cronExpression, "UTF-8");
         String path = client.getContextBaseUrl() +
-                      "/configuration/crontasks/crontask?" +
-                      "name=" + cronName + "&" +
-                      "jobClass=org.carlspring.strongbox.crontask.test.MyTask&" +
-                      "cronExpression=" + URLEncoder.encode(cronExpression, "UTF-8");
+                      "/configuration/crontasks/crontask";
+
+        String payload = getValues(cronExpression);
 
         WebTarget resource = client.getClientInstance().target(path);
 
-        Response response = resource.request(MediaType.TEXT_PLAIN)
-                                    .put(Entity.entity("Save", MediaType.TEXT_PLAIN));
+        Response response = resource.request(MediaType.APPLICATION_JSON)
+                                    .post(Entity.entity(payload, MediaType.APPLICATION_JSON));
 
         int status = response.getStatus();
 
@@ -103,7 +115,22 @@ public class CronTaskConfigurationRestletTest
 
         int status = response.getStatus();
 
-        assertEquals("Cron task config exists!", Response.status(Response.Status.BAD_REQUEST).build().getStatus(), status);
+        assertEquals("Cron task config exists!", Response.status(Response.Status.BAD_REQUEST).build().getStatus(),
+                     status);
     }
 
+    private String getValues(String cronExpression)
+    {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("jobClass", MyTask.class.getName());
+        properties.put("cronExpression", cronExpression);
+
+        Map<String, Object> values = new HashMap<>();
+        values.put("name", cronName);
+        values.put("properties", properties);
+
+        JSONObject jsonObject = new JSONObject(values);
+
+        return jsonObject.toString();
+    }
 }

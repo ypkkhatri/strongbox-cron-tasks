@@ -7,11 +7,11 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- *
  * @author Yougeshwar
  */
 public class DbUtils
 {
+
     public static <R> R withDatabase(Function<OObjectDatabaseTx, R> code)
     {
         // for simplicity use in memory database

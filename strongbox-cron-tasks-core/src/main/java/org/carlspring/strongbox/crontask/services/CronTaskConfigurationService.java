@@ -36,7 +36,7 @@ public class CronTaskConfigurationService
     {
         logger.info("CronTaskConfigurationService.saveConfiguration()");
 
-        Class c = Class.forName(cronTaskConfiguration.getJobClass());
+        Class c = Class.forName(cronTaskConfiguration.getProperty("jobClass").toString());
         Object classInstance = c.newInstance();
 
         logger.info("> " + c.getSuperclass().getCanonicalName());
@@ -49,8 +49,6 @@ public class CronTaskConfigurationService
         cronTaskConfigurationRepository.saveConfiguration(cronTaskConfiguration);
         cronJobSchedulerService.scheduleJob(cronTaskConfiguration);
     }
-
-
 
     public void deleteConfiguration(CronTaskConfiguration cronTaskConfiguration)
             throws SchedulerException, CronTaskNotFoundException, ClassNotFoundException

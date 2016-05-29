@@ -10,6 +10,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import java.util.List;
+import java.util.Map;
 
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
@@ -31,11 +32,11 @@ public class CronTaskConfigurationRestlet
     @Autowired
     private CronTaskConfigurationService cronTaskConfigurationService;
 
-    @PUT
+    @POST
     @Path("/crontask")
-    public Response saveConfiguration(@QueryParam("name") String name,
-                                      @QueryParam("jobClass") String jobClass,
-                                      @QueryParam("cronExpression") String cronExpression)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response saveConfiguration(String name,
+                                      Map<String, Object> properties)
     {
         logger.info("Save Cron Task config call");
         CronTaskConfiguration config = cronTaskConfigurationService.getConfiguration(name);
@@ -45,8 +46,7 @@ public class CronTaskConfigurationRestlet
         }
 
         config.setName(name);
-        config.setJobClass(jobClass);
-        config.setCronExpression("0 0/1 * 1/1 * ? *");
+        config.setProperties(properties);
 
         try
         {

@@ -1,29 +1,37 @@
 package org.carlspring.strongbox.crontask.configuration;
 
+import org.carlspring.strongbox.crontask.api.jobs.GroovyCronJob;
+
 import javax.persistence.Id;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * @author Yougeshwar
  */
+@XmlRootElement(name = "cronTaskConfiguration")
 public class CronTaskConfiguration
 {
+
     /**
      * RID: #<cluster-id>:<cluster-position>
-     * */
+     */
     @Id
+    @XmlElement
     private Object id;
 
+    @XmlElement
     private String name;
-    private String jobClass;
-    private String cronExpression;
 
+    @XmlElement
     private Map<String, Object> properties = new LinkedHashMap<>();
 
 
     public CronTaskConfiguration()
     {
+        properties.put("jobClass", GroovyCronJob.class.getName());
     }
 
     public Object getId()
@@ -41,26 +49,6 @@ public class CronTaskConfiguration
         this.name = name;
     }
 
-    public String getJobClass()
-    {
-        return jobClass;
-    }
-
-    public void setJobClass(String jobClass)
-    {
-        this.jobClass = jobClass;
-    }
-
-    public String getCronExpression()
-    {
-        return cronExpression;
-    }
-
-    public void setCronExpression(String cronExpression)
-    {
-        this.cronExpression = cronExpression;
-    }
-
     public Map<String, Object> getProperties()
     {
         return properties;
@@ -71,12 +59,18 @@ public class CronTaskConfiguration
         this.properties = properties;
     }
 
-    private void addProperty(String key, Object value)
+    public Object getProperty(String key)
+    {
+        return this.properties.get(key);
+    }
+
+    public void addProperty(String key,
+                             Object value)
     {
         properties.put(key, value);
     }
 
-    private void removeProperty(String key)
+    public void removeProperty(String key)
     {
         properties.remove(key);
     }

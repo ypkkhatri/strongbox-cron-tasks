@@ -26,21 +26,21 @@ public class CronJobSchedulerService
     @Autowired
     private SchedulerFactoryBean schedulerFactoryBean;
 
-    private Map<String, CronTaskStruct> map = new HashMap<>();
+    private Map<String, CronTaskStruct> jobsMap = new HashMap<>();
 
     public void scheduleJob(CronTaskConfiguration cronTaskConfiguration)
             throws ClassNotFoundException, SchedulerException
     {
         Scheduler scheduler = schedulerFactoryBean.getScheduler();
-        if (map.containsKey(cronTaskConfiguration.getName()))
+        if (jobsMap.containsKey(cronTaskConfiguration.getName()))
         {
-            CronTaskStruct cronTaskStruct = map.get(cronTaskConfiguration.getName());
+            CronTaskStruct cronTaskStruct = jobsMap.get(cronTaskConfiguration.getName());
             JobDetail jobDetail = cronTaskStruct.getJobDetail();
             org.quartz.Trigger oldTrigger = cronTaskStruct.getTrigger();
 
             org.quartz.Trigger newTrigger = TriggerBuilder.newTrigger().withIdentity(
                     cronTaskConfiguration.getName()).withSchedule(
-                    CronScheduleBuilder.cronSchedule(cronTaskConfiguration.getCronExpression())).build();
+                    CronScheduleBuilder.cronSchedule(cronTaskConfiguration.getProperty("cronExpression").toString())).build();
 
             scheduler.addJob(jobDetail, true, true);
             scheduler.rescheduleJob(oldTrigger.getKey(), newTrigger);
@@ -49,20 +49,23 @@ public class CronJobSchedulerService
         }
         else
         {
+            JobDataMap jobDataMap = new JobDataMap();
+            jobDataMap.put("configuration", cronTaskConfiguration);
+
             JobDetail jobDetail = JobBuilder.newJob(
-                    (Class<? extends Job>) Class.forName(cronTaskConfiguration.getJobClass())).withIdentity(
-                    cronTaskConfiguration.getName()).build();
+                    (Class<? extends Job>) Class.forName(cronTaskConfiguration.getProperty("jobClass").toString())).withIdentity(
+                    cronTaskConfiguration.getName()).setJobData(jobDataMap).build();
 
             org.quartz.Trigger trigger = TriggerBuilder.newTrigger().withIdentity(
                     cronTaskConfiguration.getName()).withSchedule(
-                    CronScheduleBuilder.cronSchedule(cronTaskConfiguration.getCronExpression())).build();
+                    CronScheduleBuilder.cronSchedule(cronTaskConfiguration.getProperty("cronExpression").toString())).build();
 
             scheduler.scheduleJob(jobDetail, trigger);
 
             CronTaskStruct cronTaskStruct = new CronTaskStruct();
             cronTaskStruct.setJobDetail(jobDetail);
             cronTaskStruct.setTrigger(trigger);
-            map.put(cronTaskConfiguration.getName(), cronTaskStruct);
+            jobsMap.put(cronTaskConfiguration.getName(), cronTaskStruct);
         }
 
         if (!scheduler.isStarted())
@@ -77,19 +80,19 @@ public class CronJobSchedulerService
             throws ClassNotFoundException, SchedulerException, CronTaskNotFoundException
     {
         Scheduler scheduler = schedulerFactoryBean.getScheduler();
-        if (!map.containsKey(cronTaskConfiguration.getName()))
+        if (!jobsMap.containsKey(cronTaskConfiguration.getName()))
         {
             throw new CronTaskNotFoundException("Cron Task not found on given name");
         }
 
-        CronTaskStruct cronTaskStruct = map.get(cronTaskConfiguration.getName());
+        CronTaskStruct cronTaskStruct = jobsMap.get(cronTaskConfiguration.getName());
         JobDetail jobDetail = cronTaskStruct.getJobDetail();
         org.quartz.Trigger trigger = cronTaskStruct.getTrigger();
 
         scheduler.unscheduleJob(trigger.getKey());
         scheduler.deleteJob(jobDetail.getKey());
 
-        map.remove(cronTaskConfiguration.getName());
+        jobsMap.remove(cronTaskConfiguration.getName());
 
         logger.info("Job un-scheduled successfully");
     }
