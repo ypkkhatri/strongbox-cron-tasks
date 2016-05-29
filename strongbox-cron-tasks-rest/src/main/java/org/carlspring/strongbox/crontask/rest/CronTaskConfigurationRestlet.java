@@ -52,9 +52,11 @@ public class CronTaskConfigurationRestlet
         {
             cronTaskConfigurationService.saveConfiguration(config);
         }
-        catch (ClassNotFoundException | SchedulerException | CronTaskException ex)
+        catch (ClassNotFoundException | SchedulerException | CronTaskException | InstantiationException | IllegalAccessException e)
         {
-            return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
+            logger.trace(e.getMessage(), e);
+
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         }
 
         return Response.ok().build();

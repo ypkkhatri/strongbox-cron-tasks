@@ -31,7 +31,12 @@ public class CronTaskConfigurationServiceTest
 
     @Test
     public void testCronTaskConfiguration()
-            throws ClassNotFoundException, SchedulerException, CronTaskNotFoundException, CronTaskException
+            throws ClassNotFoundException,
+                   SchedulerException,
+                   CronTaskNotFoundException,
+                   CronTaskException,
+                   IllegalAccessException,
+                   InstantiationException
     {
         addConfig();
         updateConfig();
@@ -39,7 +44,11 @@ public class CronTaskConfigurationServiceTest
     }
 
     public void addConfig()
-            throws SchedulerException, ClassNotFoundException, CronTaskException
+            throws SchedulerException,
+                   ClassNotFoundException,
+                   CronTaskException,
+                   InstantiationException,
+                   IllegalAccessException
     {
         String name = "Cron-Task-1";
         CronTaskConfiguration cronTaskConfiguration = new CronTaskConfiguration();
@@ -54,7 +63,11 @@ public class CronTaskConfigurationServiceTest
     }
 
     public void updateConfig()
-            throws SchedulerException, ClassNotFoundException, CronTaskException // Update
+            throws SchedulerException,
+                   ClassNotFoundException,
+                   CronTaskException,
+                   InstantiationException,
+                   IllegalAccessException
     {
         String name = "Cron-Task-1";
         CronTaskConfiguration cronTaskConfiguration = cronTaskConfigurationService.getConfiguration(name);

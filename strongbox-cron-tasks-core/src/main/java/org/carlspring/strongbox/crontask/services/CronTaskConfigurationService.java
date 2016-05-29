@@ -1,12 +1,11 @@
 package org.carlspring.strongbox.crontask.services;
 
-import org.carlspring.strongbox.crontask.exceptions.CronTaskException;
-import org.carlspring.strongbox.crontask.exceptions.CronTaskNotFoundException;
+import org.carlspring.strongbox.crontask.api.jobs.AbstractCronJob;
 import org.carlspring.strongbox.crontask.configuration.CronTaskConfiguration;
 import org.carlspring.strongbox.crontask.configuration.CronTaskConfigurationRepository;
+import org.carlspring.strongbox.crontask.exceptions.CronTaskException;
+import org.carlspring.strongbox.crontask.exceptions.CronTaskNotFoundException;
 import org.carlspring.strongbox.crontask.quartz.CronJobSchedulerService;
-
-import org.quartz.Job;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,21 +28,29 @@ public class CronTaskConfigurationService
     private CronJobSchedulerService cronJobSchedulerService;
 
     public void saveConfiguration(CronTaskConfiguration cronTaskConfiguration)
-            throws ClassNotFoundException, SchedulerException, CronTaskException
+            throws ClassNotFoundException,
+                   SchedulerException,
+                   CronTaskException,
+                   IllegalAccessException,
+                   InstantiationException
     {
         logger.info("CronTaskConfigurationService.saveConfiguration()");
 
-        try
+        Class c = Class.forName(cronTaskConfiguration.getJobClass());
+        Object classInstance = c.newInstance();
+
+        logger.info("> " + c.getSuperclass().getCanonicalName());
+
+        if (!(classInstance instanceof AbstractCronJob))
         {
-            Class jobClass = (Class<? extends Job>) Class.forName(cronTaskConfiguration.getJobClass());
+            throw new CronTaskException(cronTaskConfiguration.getClass() + " does not extend " + AbstractCronJob.class);
         }
-        catch (Exception ex)
-        {
-            throw new CronTaskException("Job class not implemented by org.quartz.Job interface");
-        }
+
         cronTaskConfigurationRepository.saveConfiguration(cronTaskConfiguration);
         cronJobSchedulerService.scheduleJob(cronTaskConfiguration);
     }
+
+
 
     public void deleteConfiguration(CronTaskConfiguration cronTaskConfiguration)
             throws SchedulerException, CronTaskNotFoundException, ClassNotFoundException

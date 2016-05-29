@@ -1,6 +1,8 @@
 package org.carlspring.strongbox.crontask.configuration;
 
 import javax.persistence.Id;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * @author Yougeshwar
@@ -16,6 +18,9 @@ public class CronTaskConfiguration
     private String name;
     private String jobClass;
     private String cronExpression;
+
+    private Map<String, Object> properties = new LinkedHashMap<>();
+
 
     public CronTaskConfiguration()
     {
@@ -56,28 +61,24 @@ public class CronTaskConfiguration
         this.cronExpression = cronExpression;
     }
 
-    //    public Map<String, Object> getProperties()
-//    {
-//        return properties;
-//    }
-//
-//    public void setProperties(Map<String, Object> properties)
-//    {
-//        this.properties = properties;
-//    }
-//
-//    public void addProperty(String key, Object value)
-//    {
-//        properties.put(key, value);
-//    }
-//
-//    public Object getProperty(String key)
-//    {
-//        return properties.get(key);
-//    }
-//
-//    public Object removeProperty(String key)
-//    {
-//        return properties.remove(key);
-//    }
+    public Map<String, Object> getProperties()
+    {
+        return properties;
+    }
+
+    public void setProperties(Map<String, Object> properties)
+    {
+        this.properties = properties;
+    }
+
+    private void addProperty(String key, Object value)
+    {
+        properties.put(key, value);
+    }
+
+    private void removeProperty(String key)
+    {
+        properties.remove(key);
+    }
+
 }
