@@ -1,6 +1,6 @@
 package org.carlspring.strongbox.crontask.rest;
 
-import org.carlspring.strongbox.crontask.CronTaskNotFoundException;
+import org.carlspring.strongbox.crontask.exceptions.CronTaskNotFoundException;
 import org.carlspring.strongbox.crontask.configuration.CronTasksConfig;
 
 import javax.ws.rs.client.Entity;
@@ -11,11 +11,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import org.junit.After;
-import org.junit.FixMethodOrder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

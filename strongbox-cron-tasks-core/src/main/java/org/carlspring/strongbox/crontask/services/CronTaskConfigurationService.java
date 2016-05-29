@@ -1,10 +1,12 @@
 package org.carlspring.strongbox.crontask.services;
 
-import org.carlspring.strongbox.crontask.CronTaskNotFoundException;
+import org.carlspring.strongbox.crontask.exceptions.CronTaskException;
+import org.carlspring.strongbox.crontask.exceptions.CronTaskNotFoundException;
 import org.carlspring.strongbox.crontask.configuration.CronTaskConfiguration;
 import org.carlspring.strongbox.crontask.configuration.CronTaskConfigurationRepository;
 import org.carlspring.strongbox.crontask.quartz.CronJobSchedulerService;
 
+import org.quartz.Job;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +29,18 @@ public class CronTaskConfigurationService
     private CronJobSchedulerService cronJobSchedulerService;
 
     public void saveConfiguration(CronTaskConfiguration cronTaskConfiguration)
-            throws ClassNotFoundException, SchedulerException
+            throws ClassNotFoundException, SchedulerException, CronTaskException
     {
         logger.info("CronTaskConfigurationService.saveConfiguration()");
 
+        try
+        {
+            Class jobClass = (Class<? extends Job>) Class.forName(cronTaskConfiguration.getJobClass());
+        }
+        catch (Exception ex)
+        {
+            throw new CronTaskException("Job class not implemented by org.quartz.Job interface");
+        }
         cronTaskConfigurationRepository.saveConfiguration(cronTaskConfiguration);
         cronJobSchedulerService.scheduleJob(cronTaskConfiguration);
     }

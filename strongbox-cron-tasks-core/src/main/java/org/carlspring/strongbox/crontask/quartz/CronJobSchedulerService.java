@@ -1,6 +1,6 @@
 package org.carlspring.strongbox.crontask.quartz;
 
-import org.carlspring.strongbox.crontask.CronTaskNotFoundException;
+import org.carlspring.strongbox.crontask.exceptions.CronTaskNotFoundException;
 import org.carlspring.strongbox.crontask.configuration.CronTaskConfiguration;
 
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package org.carlspring.strongbox.crontask;
+package org.carlspring.strongbox.crontask.exceptions;
 
 /**
  * @author Yougeshwar
