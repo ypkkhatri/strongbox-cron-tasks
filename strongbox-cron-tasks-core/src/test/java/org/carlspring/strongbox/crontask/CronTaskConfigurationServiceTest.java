@@ -2,13 +2,14 @@ package org.carlspring.strongbox.crontask;
 
 import org.carlspring.strongbox.crontask.configuration.CronTaskConfiguration;
 import org.carlspring.strongbox.crontask.configuration.CronTasksConfig;
+import org.carlspring.strongbox.crontask.exceptions.CronTaskException;
+import org.carlspring.strongbox.crontask.exceptions.CronTaskNotFoundException;
 import org.carlspring.strongbox.crontask.services.CronTaskConfigurationService;
 
 import org.carlspring.strongbox.crontask.test.MyTask;
-import org.junit.FixMethodOrder;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -30,7 +31,7 @@ public class CronTaskConfigurationServiceTest
 
     @Test
     public void testCronTaskConfiguration()
-            throws ClassNotFoundException, SchedulerException, CronTaskNotFoundException
+            throws ClassNotFoundException, SchedulerException, CronTaskNotFoundException, CronTaskException
     {
         addConfig();
         updateConfig();
@@ -38,7 +39,7 @@ public class CronTaskConfigurationServiceTest
     }
 
     public void addConfig()
-            throws SchedulerException, ClassNotFoundException
+            throws SchedulerException, ClassNotFoundException, CronTaskException
     {
         String name = "Cron-Task-1";
         CronTaskConfiguration cronTaskConfiguration = new CronTaskConfiguration();
@@ -53,7 +54,7 @@ public class CronTaskConfigurationServiceTest
     }
 
     public void updateConfig()
-            throws SchedulerException, ClassNotFoundException // Update
+            throws SchedulerException, ClassNotFoundException, CronTaskException // Update
     {
         String name = "Cron-Task-1";
         CronTaskConfiguration cronTaskConfiguration = cronTaskConfigurationService.getConfiguration(name);
