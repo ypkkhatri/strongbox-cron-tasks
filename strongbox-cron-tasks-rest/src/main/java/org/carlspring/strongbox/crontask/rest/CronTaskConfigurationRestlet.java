@@ -1,5 +1,7 @@
 package org.carlspring.strongbox.crontask.rest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.carlspring.strongbox.crontask.exceptions.CronTaskException;
 import org.carlspring.strongbox.crontask.exceptions.CronTaskNotFoundException;
 import org.carlspring.strongbox.crontask.configuration.CronTaskConfiguration;
@@ -7,6 +9,7 @@ import org.carlspring.strongbox.crontask.services.CronTaskConfigurationService;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import java.util.List;
@@ -32,30 +35,19 @@ public class CronTaskConfigurationRestlet
     @Autowired
     private CronTaskConfigurationService cronTaskConfigurationService;
 
-    @POST
+    @PUT
     @Path("/crontask")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response saveConfiguration(String name,
-                                      Map<String, Object> properties)
+    public Response saveConfiguration(CronTaskConfiguration cronTaskConfiguration)
     {
         logger.info("Save Cron Task config call");
-        CronTaskConfiguration config = cronTaskConfigurationService.getConfiguration(name);
-        if (config == null)
-        {
-            config = new CronTaskConfiguration();
-        }
-
-        config.setName(name);
-        config.setProperties(properties);
-
         try
         {
-            cronTaskConfigurationService.saveConfiguration(config);
+            cronTaskConfigurationService.saveConfiguration(cronTaskConfiguration);
         }
         catch (ClassNotFoundException | SchedulerException | CronTaskException | InstantiationException | IllegalAccessException e)
         {
             logger.trace(e.getMessage(), e);
-
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         }
 

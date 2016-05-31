@@ -36,6 +36,13 @@ public class CronTaskConfigurationService
     {
         logger.info("CronTaskConfigurationService.saveConfiguration()");
 
+        if(!cronTaskConfiguration.contain("cronExpression")) {
+            throw new CronTaskException("cronExpression property does not exists");
+        }
+        if(!cronTaskConfiguration.contain("jobClass")) {
+            throw new CronTaskException("jobClass property does not exists");
+        }
+
         Class c = Class.forName(cronTaskConfiguration.getProperty("jobClass").toString());
         Object classInstance = c.newInstance();
 

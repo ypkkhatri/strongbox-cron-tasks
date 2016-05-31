@@ -125,14 +125,6 @@
             <artifactId>jersey-media-moxy</artifactId>
             <version>${version.jersey}</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.codehaus.jettison</groupId>
-            <artifactId>jettison</artifactId>
-            <version>${version.jettison}</version>
-        </dependency>
-
-
     </dependencies>
 
     <profiles>

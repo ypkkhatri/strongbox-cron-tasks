@@ -5,7 +5,7 @@ import org.carlspring.strongbox.crontask.api.jobs.GroovyCronJob;
 import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -19,14 +19,13 @@ public class CronTaskConfiguration
      * RID: #<cluster-id>:<cluster-position>
      */
     @Id
-    @XmlElement
     private Object id;
 
     @XmlElement
     private String name;
 
     @XmlElement
-    private Map<String, Object> properties = new LinkedHashMap<>();
+    private Map<String, String> properties = new HashMap<>();
 
 
     public CronTaskConfiguration()
@@ -49,23 +48,23 @@ public class CronTaskConfiguration
         this.name = name;
     }
 
-    public Map<String, Object> getProperties()
+    public Map<String, String> getProperties()
     {
         return properties;
     }
 
-    public void setProperties(Map<String, Object> properties)
+    public void setProperties(Map<String, String> properties)
     {
         this.properties = properties;
     }
 
-    public Object getProperty(String key)
+    public String getProperty(String key)
     {
         return this.properties.get(key);
     }
 
     public void addProperty(String key,
-                             Object value)
+                             String value)
     {
         properties.put(key, value);
     }
@@ -75,4 +74,7 @@ public class CronTaskConfiguration
         properties.remove(key);
     }
 
+    public boolean contain(String key) {
+        return properties.containsKey(key);
+    }
 }

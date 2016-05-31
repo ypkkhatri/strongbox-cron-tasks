@@ -1,23 +1,11 @@
 package org.carlspring.strongbox.crontask.rest;
 
-import org.carlspring.strongbox.crontask.exceptions.CronTaskNotFoundException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.carlspring.strongbox.crontask.configuration.CronTaskConfiguration;
 import org.carlspring.strongbox.crontask.configuration.CronTasksConfig;
+import org.carlspring.strongbox.crontask.exceptions.CronTaskNotFoundException;
 import org.carlspring.strongbox.crontask.test.MyTask;
-
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
-
-import com.fasterxml.jackson.databind.util.JSONPObject;
-import com.fasterxml.jackson.databind.util.JSONWrappedObject;
-import org.codehaus.jettison.json.JSONObject;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,6 +16,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.UnsupportedEncodingException;
+
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -67,35 +62,38 @@ public class CronTaskConfigurationRestletTest
     {
         logger.info("Cron Expression: " + cronExpression);
 
-//        String path = client.getContextBaseUrl() +
-//                      "/configuration/crontasks/crontask?" +
-//                      "name=" + cronName + "&" +
-//                      "jobClass=org.carlspring.strongbox.crontask.test.MyTask&" +
-//                      "cronExpression=" + URLEncoder.encode(cronExpression, "UTF-8");
         String path = client.getContextBaseUrl() +
                       "/configuration/crontasks/crontask";
 
-        String payload = getValues(cronExpression);
+        CronTaskConfiguration cronTaskConfiguration = new CronTaskConfiguration();
+        cronTaskConfiguration.setName(cronName);
+        cronTaskConfiguration.addProperty("cronExpression", cronExpression);
+        cronTaskConfiguration.addProperty("jobClass", MyTask.class.getName());
 
+        String payload = toJSON(cronTaskConfiguration);
+        logger.info(payload);
         WebTarget resource = client.getClientInstance().target(path);
 
         Response response = resource.request(MediaType.APPLICATION_JSON)
-                                    .post(Entity.entity(payload, MediaType.APPLICATION_JSON));
+                                    .put(Entity.entity(payload, MediaType.APPLICATION_JSON));
 
         int status = response.getStatus();
-
+        if (Response.ok().build().getStatus() != status)
+        {
+            logger.error(response.readEntity(String.class));
+        }
         assertEquals("Failed to schedule job!", Response.ok().build().getStatus(), status);
 
-        String url = client.getContextBaseUrl() +
-                     "/configuration/crontasks/crontask?" +
-                     "name=" + cronName;
-        resource = client.getClientInstance().target(url);
-
-        response = resource.request(MediaType.APPLICATION_JSON).get();
-
-        status = response.getStatus();
-
-        assertEquals("Failed to get cron task config!", Response.ok().build().getStatus(), status);
+//        String url = client.getContextBaseUrl() +
+//                     "/configuration/crontasks/crontask?" +
+//                     "name=" + cronName;
+//        resource = client.getClientInstance().target(url);
+//
+//        response = resource.request(MediaType.APPLICATION_JSON).get();
+//
+//        status = response.getStatus();
+//
+//        assertEquals("Failed to get cron task config!", Response.ok().build().getStatus(), status);
     }
 
     public void deleteConfig()
@@ -119,18 +117,18 @@ public class CronTaskConfigurationRestletTest
                      status);
     }
 
-    private String getValues(String cronExpression)
+    private String toJSON(Object object)
     {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("jobClass", MyTask.class.getName());
-        properties.put("cronExpression", cronExpression);
 
-        Map<String, Object> values = new HashMap<>();
-        values.put("name", cronName);
-        values.put("properties", properties);
-
-        JSONObject jsonObject = new JSONObject(values);
-
-        return jsonObject.toString();
+        ObjectMapper mapper = new ObjectMapper();
+        try
+        {
+            return mapper.writeValueAsString(object);
+        }
+        catch (JsonProcessingException e)
+        {
+            logger.error("JSON Error:", e);
+        }
+        return "{}";
     }
 }
