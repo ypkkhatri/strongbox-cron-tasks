@@ -37,9 +37,18 @@ public class CronTaskConfigurationRestlet
 
     @PUT
     @Path("/crontask")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response saveConfiguration(CronTaskConfiguration cronTaskConfiguration)
     {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try
+        {
+            logger.info(objectMapper.writeValueAsString(cronTaskConfiguration));
+        }
+        catch (JsonProcessingException e)
+        {
+            e.printStackTrace();
+        }
         logger.info("Save Cron Task config call");
         try
         {
@@ -80,7 +89,7 @@ public class CronTaskConfigurationRestlet
 
     @GET
     @Path("/crontask")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response getConfiguration(@QueryParam("name") String name)
     {
         CronTaskConfiguration config = cronTaskConfigurationService.getConfiguration(name);

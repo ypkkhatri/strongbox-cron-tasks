@@ -1,10 +1,14 @@
 package org.carlspring.strongbox.crontask.configuration;
 
+import org.carlspring.strongbox.crontask.adpaters.MapAdapter;
 import org.carlspring.strongbox.crontask.api.jobs.GroovyCronJob;
 
 import javax.persistence.Id;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,6 +16,7 @@ import java.util.Map;
  * @author Yougeshwar
  */
 @XmlRootElement(name = "cronTaskConfiguration")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class CronTaskConfiguration
 {
 
@@ -21,12 +26,12 @@ public class CronTaskConfiguration
     @Id
     private Object id;
 
-    @XmlElement
+    @XmlElement(name = "name")
     private String name;
 
-    @XmlElement
+    @XmlElement(name = "properties")
+    @XmlJavaTypeAdapter(MapAdapter.class)
     private Map<String, String> properties = new HashMap<>();
-
 
     public CronTaskConfiguration()
     {
@@ -36,6 +41,11 @@ public class CronTaskConfiguration
     public Object getId()
     {
         return id;
+    }
+
+    public void setId(Object id)
+    {
+        this.id = id;
     }
 
     public String getName()
@@ -58,13 +68,13 @@ public class CronTaskConfiguration
         this.properties = properties;
     }
 
-    public String getProperty(String key)
+    public Object getProperty(String key)
     {
         return this.properties.get(key);
     }
 
     public void addProperty(String key,
-                             String value)
+                            String value)
     {
         properties.put(key, value);
     }

@@ -70,12 +70,12 @@ public class CronTaskConfigurationRestletTest
         cronTaskConfiguration.addProperty("cronExpression", cronExpression);
         cronTaskConfiguration.addProperty("jobClass", MyTask.class.getName());
 
-        String payload = toJSON(cronTaskConfiguration);
-        logger.info(payload);
+//        String payload = toJSON(cronTaskConfiguration);
+//        logger.info(payload);
         WebTarget resource = client.getClientInstance().target(path);
 
         Response response = resource.request(MediaType.APPLICATION_JSON)
-                                    .put(Entity.entity(payload, MediaType.APPLICATION_JSON));
+                                    .put(Entity.entity(cronTaskConfiguration, MediaType.APPLICATION_JSON));
 
         int status = response.getStatus();
         if (Response.ok().build().getStatus() != status)
