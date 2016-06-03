@@ -9,11 +9,9 @@ import org.carlspring.strongbox.crontask.services.CronTaskConfigurationService;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import java.util.List;
-import java.util.Map;
 
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
@@ -43,24 +41,19 @@ public class CronTaskConfigurationRestlet
         ObjectMapper objectMapper = new ObjectMapper();
         try
         {
-            logger.info(objectMapper.writeValueAsString(cronTaskConfiguration));
-        }
-        catch (JsonProcessingException e)
-        {
-            e.printStackTrace();
-        }
-        logger.info("Save Cron Task config call");
-        try
-        {
+            logger.debug(objectMapper.writeValueAsString(cronTaskConfiguration));
+            logger.debug("Save Cron Task config call");
+
             cronTaskConfigurationService.saveConfiguration(cronTaskConfiguration);
+
+            return Response.ok().build();
         }
-        catch (ClassNotFoundException | SchedulerException | CronTaskException | InstantiationException | IllegalAccessException e)
+        catch (ClassNotFoundException | SchedulerException | CronTaskException |
+               InstantiationException | IllegalAccessException | JsonProcessingException e)
         {
             logger.trace(e.getMessage(), e);
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         }
-
-        return Response.ok().build();
     }
 
     @DELETE

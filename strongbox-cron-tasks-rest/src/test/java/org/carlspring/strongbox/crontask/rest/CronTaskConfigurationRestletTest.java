@@ -21,6 +21,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXBException;
 import java.io.UnsupportedEncodingException;
 
 import static org.junit.Assert.assertEquals;
@@ -39,7 +40,11 @@ public class CronTaskConfigurationRestletTest
 
     @Test
     public void testCronTaskConfiguration()
-            throws ClassNotFoundException, SchedulerException, CronTaskNotFoundException, UnsupportedEncodingException
+            throws ClassNotFoundException,
+                   SchedulerException,
+                   CronTaskNotFoundException,
+                   UnsupportedEncodingException,
+                   JAXBException
     {
         client = TestClient.getTestInstance();
         saveJavaConfig("0 0/1 * 1/1 * ? *");
@@ -58,30 +63,30 @@ public class CronTaskConfigurationRestletTest
     }
 
     public void saveJavaConfig(String cronExpression)
-            throws UnsupportedEncodingException
+            throws UnsupportedEncodingException, JAXBException
     {
-        logger.info("Cron Expression: " + cronExpression);
+        logger.debug("Cron Expression: " + cronExpression);
 
-        String path = client.getContextBaseUrl() +
-                      "/configuration/crontasks/crontask";
+        String url = client.getContextBaseUrl() + "/configuration/crontasks/crontask";
 
-        CronTaskConfiguration cronTaskConfiguration = new CronTaskConfiguration();
-        cronTaskConfiguration.setName(cronName);
-        cronTaskConfiguration.addProperty("cronExpression", cronExpression);
-        cronTaskConfiguration.addProperty("jobClass", MyTask.class.getName());
+        CronTaskConfiguration configuration = new CronTaskConfiguration();
+        configuration.setName(cronName);
+        configuration.addProperty("cronExpression", cronExpression);
+        configuration.addProperty("jobClass", MyTask.class.getName());
 
-//        String payload = toJSON(cronTaskConfiguration);
-//        logger.info(payload);
-        WebTarget resource = client.getClientInstance().target(path);
+//        String payload = toJSON(configuration);
+//        logger.debug(payload);
+        WebTarget resource = client.getClientInstance().target(url);
 
         Response response = resource.request(MediaType.APPLICATION_JSON)
-                                    .put(Entity.entity(cronTaskConfiguration, MediaType.APPLICATION_JSON));
+                                    .put(Entity.entity(configuration, MediaType.APPLICATION_JSON));
 
         int status = response.getStatus();
         if (Response.ok().build().getStatus() != status)
         {
             logger.error(response.readEntity(String.class));
         }
+
         assertEquals("Failed to schedule job!", Response.ok().build().getStatus(), status);
 
 //        String url = client.getContextBaseUrl() +

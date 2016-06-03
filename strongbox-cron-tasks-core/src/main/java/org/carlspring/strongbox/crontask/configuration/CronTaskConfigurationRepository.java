@@ -1,6 +1,5 @@
 package org.carlspring.strongbox.crontask.configuration;
 
-import com.google.common.collect.Iterables;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import org.slf4j.Logger;
@@ -28,7 +27,7 @@ public class CronTaskConfigurationRepository
 
     public List<CronTaskConfiguration> getConfigurations()
     {
-        logger.info("CronTaskConfigurationRepository.getConfigurations()");
+        logger.debug("CronTaskConfigurationRepository.getConfigurations()");
 
         return withDatabase(db -> {
             List<CronTaskConfiguration> result =
@@ -40,7 +39,7 @@ public class CronTaskConfigurationRepository
 
     public CronTaskConfiguration getConfiguration(String name)
     {
-        logger.info("CronTaskConfigurationRepository.getConfiguration()");
+        logger.debug("CronTaskConfigurationRepository.getConfiguration()");
 
         return withDatabase(db -> {
             List<CronTaskConfiguration> result =
@@ -56,7 +55,7 @@ public class CronTaskConfigurationRepository
 
     public void saveConfiguration(CronTaskConfiguration cronTaskConfiguration)
     {
-        logger.info("CronTaskConfigurationRepository.saveConfiguration()");
+        logger.debug("CronTaskConfigurationRepository.saveConfiguration()");
 
         withDatabase(db -> {
             db.save(cronTaskConfiguration);
@@ -66,7 +65,7 @@ public class CronTaskConfigurationRepository
 
     public void deleteConfiguration(CronTaskConfiguration cronTaskConfiguration)
     {
-        logger.info("CronTaskConfigurationRepository.deleteConfiguration()");
+        logger.debug("CronTaskConfigurationRepository.deleteConfiguration()");
 
         withDatabase(db -> {
             return db.delete(cronTaskConfiguration);
@@ -75,7 +74,7 @@ public class CronTaskConfigurationRepository
 
     public void deleteConfiguration(Object id)
     {
-        logger.info("CronTaskConfigurationRepository.deleteConfiguration()");
+        logger.debug("CronTaskConfigurationRepository.deleteConfiguration()");
 
         withDatabase(db -> {
             return db.command(new OCommandSQL("DELETE FROM CronTaskConfiguration WHERE id = '" + id + "'")).execute();
@@ -84,7 +83,7 @@ public class CronTaskConfigurationRepository
 
     boolean schemaExists()
     {
-        logger.info("CronTaskConfigurationRepository.schemaExists()");
+        logger.debug("CronTaskConfigurationRepository.schemaExists()");
 
         return withDatabase(db -> {
             return db.getMetadata().getSchema().existsClass("CronTaskConfiguration");
@@ -93,7 +92,7 @@ public class CronTaskConfigurationRepository
 
     public void init()
     {
-        logger.info("CronTaskConfigurationRepository.init()");
+        logger.debug("CronTaskConfigurationRepository.init()");
 
         withDatabase(db -> {
             db.getEntityManager().registerEntityClass(CronTaskConfiguration.class, true);

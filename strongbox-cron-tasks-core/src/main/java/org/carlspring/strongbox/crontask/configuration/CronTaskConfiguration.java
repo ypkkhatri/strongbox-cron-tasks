@@ -1,21 +1,14 @@
 package org.carlspring.strongbox.crontask.configuration;
 
-import org.carlspring.strongbox.crontask.adpaters.MapAdapter;
-import org.carlspring.strongbox.crontask.api.jobs.GroovyCronJob;
-
 import javax.persistence.Id;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @author Yougeshwar
  */
-@XmlRootElement(name = "cronTaskConfiguration")
+@XmlRootElement(name = "cron-task-configuration")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CronTaskConfiguration
 {
@@ -24,18 +17,17 @@ public class CronTaskConfiguration
      * RID: #<cluster-id>:<cluster-position>
      */
     @Id
+    @XmlTransient
     private Object id;
 
     @XmlElement(name = "name")
     private String name;
 
     @XmlElement(name = "properties")
-    @XmlJavaTypeAdapter(MapAdapter.class)
     private Map<String, String> properties = new HashMap<>();
 
     public CronTaskConfiguration()
     {
-        properties.put("jobClass", GroovyCronJob.class.getName());
     }
 
     public Object getId()

@@ -17,6 +17,6 @@ public class MyTask
     @Override
     protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException
     {
-        logger.info("My Rest Task scheduled job");
+        logger.debug("My Rest Task scheduled job");
     }
 }

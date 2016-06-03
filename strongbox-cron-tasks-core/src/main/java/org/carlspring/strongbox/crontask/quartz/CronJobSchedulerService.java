@@ -70,10 +70,10 @@ public class CronJobSchedulerService
 
         if (!scheduler.isStarted())
         {
-            logger.info("Scheduler started");
+            logger.debug("Scheduler started");
             scheduler.start();
         }
-        logger.info("Job scheduled successfully");
+        logger.debug("Job scheduled successfully");
     }
 
     public void deleteJob(CronTaskConfiguration cronTaskConfiguration)
@@ -94,6 +94,6 @@ public class CronJobSchedulerService
 
         jobsMap.remove(cronTaskConfiguration.getName());
 
-        logger.info("Job un-scheduled successfully");
+        logger.debug("Job un-scheduled successfully");
     }
 }

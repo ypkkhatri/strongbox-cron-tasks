@@ -19,7 +19,7 @@ public class MyTask extends JavaCronJob
     protected void executeInternal(JobExecutionContext jobExecutionContext)
             throws JobExecutionException
     {
-        logger.info("Executed MyTask.");
+        logger.debug("Executed MyTask.");
     }
 
 }

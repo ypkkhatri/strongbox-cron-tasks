@@ -34,7 +34,7 @@ public class CronTaskConfigurationService
                    IllegalAccessException,
                    InstantiationException
     {
-        logger.info("CronTaskConfigurationService.saveConfiguration()");
+        logger.debug("CronTaskConfigurationService.saveConfiguration()");
 
         if(!cronTaskConfiguration.contain("cronExpression")) {
             throw new CronTaskException("cronExpression property does not exists");
@@ -46,7 +46,7 @@ public class CronTaskConfigurationService
         Class c = Class.forName(cronTaskConfiguration.getProperty("jobClass").toString());
         Object classInstance = c.newInstance();
 
-        logger.info("> " + c.getSuperclass().getCanonicalName());
+        logger.debug("> " + c.getSuperclass().getCanonicalName());
 
         if (!(classInstance instanceof AbstractCronJob))
         {
@@ -60,7 +60,7 @@ public class CronTaskConfigurationService
     public void deleteConfiguration(CronTaskConfiguration cronTaskConfiguration)
             throws SchedulerException, CronTaskNotFoundException, ClassNotFoundException
     {
-        logger.info("CronTaskConfigurationService.deleteConfiguration()");
+        logger.debug("CronTaskConfigurationService.deleteConfiguration()");
 
         cronTaskConfigurationRepository.deleteConfiguration(cronTaskConfiguration);
         cronJobSchedulerService.deleteJob(cronTaskConfiguration);
@@ -68,14 +68,14 @@ public class CronTaskConfigurationService
 
     public CronTaskConfiguration getConfiguration(String name)
     {
-        logger.info("CronTaskConfigurationService.getConfiguration()");
+        logger.debug("CronTaskConfigurationService.getConfiguration()");
 
         return cronTaskConfigurationRepository.getConfiguration(name);
     }
 
     public List<CronTaskConfiguration> getConfigurations()
     {
-        logger.info("CronTaskConfigurationService.getConfigurations()");
+        logger.debug("CronTaskConfigurationService.getConfigurations()");
 
         return cronTaskConfigurationRepository.getConfigurations();
     }
