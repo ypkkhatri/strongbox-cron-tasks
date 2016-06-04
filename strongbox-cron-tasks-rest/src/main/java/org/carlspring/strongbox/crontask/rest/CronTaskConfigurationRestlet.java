@@ -11,8 +11,11 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import java.io.InputStream;
 import java.util.List;
 
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,6 +113,44 @@ public class CronTaskConfigurationRestlet
         }
 
         return Response.ok(configList).build();
+    }
+
+    @POST
+    @Path("/upload/{name}")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response upload(@PathParam("name") String name,
+                           @FormDataParam("file") InputStream inputStream,
+                           @FormDataParam("file") FormDataContentDisposition formDataContentDisposition)
+    {
+        String fileName = formDataContentDisposition.getFileName();
+        if (!fileName.endsWith(".groovy"))
+        {
+            return Response.status(Response.Status.BAD_REQUEST)
+                           .entity("Uploaded file must be groovy")
+                           .build();
+        }
+
+        CronTaskConfiguration cronTaskConfiguration = cronTaskConfigurationService.getConfiguration(name);
+        if (cronTaskConfiguration == null)
+        {
+            return Response.status(Response.Status.BAD_REQUEST)
+                           .entity("Configuration not found by this name!")
+                           .build();
+        }
+        cronTaskConfiguration.addProperty("fileName", fileName);
+
+        logger.info("Upload script");
+        try
+        {
+            cronTaskConfigurationService.saveConfiguration(cronTaskConfiguration);
+        }
+        catch (ClassNotFoundException | SchedulerException | CronTaskException | InstantiationException | IllegalAccessException e)
+        {
+            logger.trace(e.getMessage(), e);
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+        }
+
+        return Response.ok().build();
     }
 
 }

@@ -60,7 +60,7 @@ public class CronTaskConfiguration
         this.properties = properties;
     }
 
-    public Object getProperty(String key)
+    public String getProperty(String key)
     {
         return this.properties.get(key);
     }

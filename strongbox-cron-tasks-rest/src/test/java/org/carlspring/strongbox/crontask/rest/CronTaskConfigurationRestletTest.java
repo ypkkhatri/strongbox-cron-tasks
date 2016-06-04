@@ -2,10 +2,12 @@ package org.carlspring.strongbox.crontask.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.carlspring.strongbox.crontask.configuration.CronTaskConfiguration;
 import org.carlspring.strongbox.crontask.configuration.CronTasksConfig;
 import org.carlspring.strongbox.crontask.exceptions.CronTaskNotFoundException;
 import org.carlspring.strongbox.crontask.test.MyTask;
+
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,7 +50,7 @@ public class CronTaskConfigurationRestletTest
     {
         client = TestClient.getTestInstance();
         saveJavaConfig("0 0/1 * 1/1 * ? *");
-//        saveConfig("0 0 12 1/1 * ? *");
+        saveJavaConfig("0 0/2 * 1/1 * ? *");
         deleteConfig();
     }
 
@@ -74,8 +76,6 @@ public class CronTaskConfigurationRestletTest
         configuration.addProperty("cronExpression", cronExpression);
         configuration.addProperty("jobClass", MyTask.class.getName());
 
-//        String payload = toJSON(configuration);
-//        logger.debug(payload);
         WebTarget resource = client.getClientInstance().target(url);
 
         Response response = resource.request(MediaType.APPLICATION_JSON)
@@ -89,16 +89,19 @@ public class CronTaskConfigurationRestletTest
 
         assertEquals("Failed to schedule job!", Response.ok().build().getStatus(), status);
 
-//        String url = client.getContextBaseUrl() +
-//                     "/configuration/crontasks/crontask?" +
-//                     "name=" + cronName;
-//        resource = client.getClientInstance().target(url);
-//
-//        response = resource.request(MediaType.APPLICATION_JSON).get();
-//
-//        status = response.getStatus();
-//
-//        assertEquals("Failed to get cron task config!", Response.ok().build().getStatus(), status);
+        /**
+         * Retrieve saved configuration
+         * */
+        url = client.getContextBaseUrl() +
+              "/configuration/crontasks/crontask?" +
+              "name=" + cronName;
+        resource = client.getClientInstance().target(url);
+
+        response = resource.request(MediaType.APPLICATION_JSON).get();
+
+        status = response.getStatus();
+
+        assertEquals("Failed to get cron task config!", Response.ok().build().getStatus(), status);
     }
 
     public void deleteConfig()
@@ -109,6 +112,9 @@ public class CronTaskConfigurationRestletTest
         Response response = client.delete(path);
         assertEquals("Failed to delete job!", Response.ok().build().getStatus(), response.getStatus());
 
+        /**
+         * Retrieve deleted configuration
+         * */
         String url = client.getContextBaseUrl() +
                      "/configuration/crontasks/crontask?" +
                      "name=" + cronName;
@@ -122,18 +128,4 @@ public class CronTaskConfigurationRestletTest
                      status);
     }
 
-    private String toJSON(Object object)
-    {
-
-        ObjectMapper mapper = new ObjectMapper();
-        try
-        {
-            return mapper.writeValueAsString(object);
-        }
-        catch (JsonProcessingException e)
-        {
-            logger.error("JSON Error:", e);
-        }
-        return "{}";
-    }
 }

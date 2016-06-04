@@ -1,5 +1,7 @@
 package org.carlspring.strongbox.crontask.test;
 
+import org.carlspring.strongbox.crontask.api.jobs.JavaCronJob;
+
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
@@ -10,7 +12,7 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
  * @author Yougeshwar
  */
 public class MyTask
-        extends QuartzJobBean
+        extends JavaCronJob
 {
     private final Logger logger =
             LoggerFactory.getLogger(MyTask.class);

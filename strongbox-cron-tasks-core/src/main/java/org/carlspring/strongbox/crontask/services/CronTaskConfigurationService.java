@@ -39,22 +39,24 @@ public class CronTaskConfigurationService
         if(!cronTaskConfiguration.contain("cronExpression")) {
             throw new CronTaskException("cronExpression property does not exists");
         }
-        if(!cronTaskConfiguration.contain("jobClass")) {
-            throw new CronTaskException("jobClass property does not exists");
-        }
-
-        Class c = Class.forName(cronTaskConfiguration.getProperty("jobClass").toString());
-        Object classInstance = c.newInstance();
-
-        logger.debug("> " + c.getSuperclass().getCanonicalName());
-
-        if (!(classInstance instanceof AbstractCronJob))
-        {
-            throw new CronTaskException(cronTaskConfiguration.getClass() + " does not extend " + AbstractCronJob.class);
-        }
+//        if(!cronTaskConfiguration.contain("jobClass")) {
+//            throw new CronTaskException("jobClass property does not exists");
+//        }
 
         cronTaskConfigurationRepository.saveConfiguration(cronTaskConfiguration);
-        cronJobSchedulerService.scheduleJob(cronTaskConfiguration);
+
+        if(cronTaskConfiguration.contain("jobClass")) {
+            Class c = Class.forName(cronTaskConfiguration.getProperty("jobClass"));
+            Object classInstance = c.newInstance();
+
+            logger.debug("> " + c.getSuperclass().getCanonicalName());
+
+            if (!(classInstance instanceof AbstractCronJob))
+            {
+                throw new CronTaskException(c + " does not extend " + AbstractCronJob.class);
+            }
+            cronJobSchedulerService.scheduleJob(cronTaskConfiguration);
+        }
     }
 
     public void deleteConfiguration(CronTaskConfiguration cronTaskConfiguration)
