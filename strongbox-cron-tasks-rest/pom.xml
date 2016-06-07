@@ -32,7 +32,7 @@
     </organization>
 
     <properties>
-        <version.jettison>1.3.7</version.jettison>
+        <version.jersey-multipart>1.19.1</version.jersey-multipart>
     </properties>
 
     <build>
@@ -124,6 +124,12 @@
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-moxy</artifactId>
             <version>${version.jersey}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.jersey.contribs</groupId>
+            <artifactId>jersey-multipart</artifactId>
+            <version>${version.jersey-multipart}</version>
         </dependency>
     </dependencies>
 

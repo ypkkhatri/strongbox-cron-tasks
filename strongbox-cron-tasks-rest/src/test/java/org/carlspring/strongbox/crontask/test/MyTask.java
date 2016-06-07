@@ -20,5 +20,6 @@ public class MyTask
     protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException
     {
         logger.debug("My Rest Task scheduled job");
+
     }
 }
