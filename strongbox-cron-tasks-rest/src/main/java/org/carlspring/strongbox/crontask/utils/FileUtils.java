@@ -9,30 +9,37 @@ import java.io.*;
  */
 public class FileUtils
 {
-    public static void writeToFile(InputStream uploadedInputStream,
-                             String uploadedFileLocation)
+    public static void writeToFile(InputStream is,
+                             String dirPath, String fileName)
             throws CronTaskException
     {
-        File path = new File(uploadedFileLocation);
+        File dir = new File(dirPath);
 
-        if(!path.exists())
-            path.mkdirs();
+        if(!dir.exists())
+            dir.mkdirs();
 
-        try (OutputStream out = new FileOutputStream(path))
+        File file = new File(dirPath + "/" + fileName);
+
+        try (OutputStream out = new FileOutputStream(file))
         {
             int read = 0;
             byte[] bytes = new byte[1024];
 
-            while ((read = uploadedInputStream.read(bytes)) != -1)
+            while ((read = is.read(bytes)) != -1)
             {
                 out.write(bytes, 0, read);
             }
             out.flush();
-            out.close();
         }
         catch (IOException e)
         {
             throw new CronTaskException(e);
         }
+    }
+
+    public static void deleteFile(String url) {
+        File file = new File(url);
+        if(file.exists())
+            file.delete();
     }
 }

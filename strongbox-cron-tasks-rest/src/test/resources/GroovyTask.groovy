@@ -2,7 +2,7 @@
  * @author Yougeshwar
  */
 class GroovyTask {
-    void hello() {
+    void execute() {
         println("My Groovy Task executed")
     }
 }

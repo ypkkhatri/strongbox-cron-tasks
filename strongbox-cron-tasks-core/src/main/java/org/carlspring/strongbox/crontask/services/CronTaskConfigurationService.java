@@ -39,9 +39,6 @@ public class CronTaskConfigurationService
         if(!cronTaskConfiguration.contain("cronExpression")) {
             throw new CronTaskException("cronExpression property does not exists");
         }
-//        if(!cronTaskConfiguration.contain("jobClass")) {
-//            throw new CronTaskException("jobClass property does not exists");
-//        }
 
         cronTaskConfigurationRepository.saveConfiguration(cronTaskConfiguration);
 
@@ -60,7 +57,9 @@ public class CronTaskConfigurationService
     }
 
     public void deleteConfiguration(CronTaskConfiguration cronTaskConfiguration)
-            throws SchedulerException, CronTaskNotFoundException, ClassNotFoundException
+            throws SchedulerException,
+                   CronTaskNotFoundException,
+                   ClassNotFoundException
     {
         logger.debug("CronTaskConfigurationService.deleteConfiguration()");
 
@@ -80,6 +79,13 @@ public class CronTaskConfigurationService
         logger.debug("CronTaskConfigurationService.getConfigurations()");
 
         return cronTaskConfigurationRepository.getConfigurations();
+    }
+
+    public List<String> getGroovyScriptsName()
+    {
+        logger.debug("CronTaskConfigurationService.getGroovyScriptsName");
+
+        return cronJobSchedulerService.getGroovyScriptsName();
     }
 
 

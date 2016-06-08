@@ -1,25 +1,21 @@
 package org.carlspring.strongbox.crontask.rest;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.carlspring.strongbox.crontask.api.jobs.GroovyCronJob;
+import org.carlspring.strongbox.crontask.configuration.CronTaskConfiguration;
 import org.carlspring.strongbox.crontask.exceptions.CronTaskException;
 import org.carlspring.strongbox.crontask.exceptions.CronTaskNotFoundException;
-import org.carlspring.strongbox.crontask.configuration.CronTaskConfiguration;
 import org.carlspring.strongbox.crontask.services.CronTaskConfigurationService;
 import org.carlspring.strongbox.crontask.utils.FileUtils;
 import org.carlspring.strongbox.resource.ConfigurationResourceResolver;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import javax.ws.rs.core.*;
 import java.io.InputStream;
 import java.util.List;
 
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
-import org.glassfish.jersey.media.multipart.FormDataParam;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +38,8 @@ public class CronTaskConfigurationRestlet
 
     @PUT
     @Path("/crontask")
-    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Consumes({ MediaType.APPLICATION_JSON,
+                MediaType.APPLICATION_XML })
     public Response saveConfiguration(CronTaskConfiguration cronTaskConfiguration)
     {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -56,7 +53,7 @@ public class CronTaskConfigurationRestlet
             return Response.ok().build();
         }
         catch (ClassNotFoundException | SchedulerException | CronTaskException |
-               InstantiationException | IllegalAccessException | JsonProcessingException e)
+                       InstantiationException | IllegalAccessException | JsonProcessingException e)
         {
             logger.trace(e.getMessage(), e);
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
@@ -78,8 +75,20 @@ public class CronTaskConfigurationRestlet
         try
         {
             cronTaskConfigurationService.deleteConfiguration(config);
+            if (config.contain("jobClass"))
+            {
+                Class c = Class.forName(config.getProperty("jobClass"));
+                Object classInstance = c.newInstance();
+
+                logger.debug("> " + c.getSuperclass().getCanonicalName());
+
+                if (classInstance instanceof GroovyCronJob)
+                {
+                    FileUtils.deleteFile(config.getProperty("script.path"));
+                }
+            }
         }
-        catch (ClassNotFoundException | SchedulerException | CronTaskNotFoundException ex)
+        catch (ClassNotFoundException | SchedulerException | CronTaskNotFoundException | InstantiationException | IllegalAccessException ex)
         {
             return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
         }
@@ -89,7 +98,8 @@ public class CronTaskConfigurationRestlet
 
     @GET
     @Path("/crontask")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON,
+                MediaType.APPLICATION_XML })
     public Response getConfiguration(@QueryParam("name") String name)
     {
         CronTaskConfiguration config = cronTaskConfigurationService.getConfiguration(name);
@@ -104,8 +114,9 @@ public class CronTaskConfigurationRestlet
     }
 
     @GET
-    @Path("/crontasks")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/")
+    @Produces({ MediaType.APPLICATION_JSON,
+                MediaType.APPLICATION_XML })
     public Response getConfigurations()
     {
         List<CronTaskConfiguration> configList = cronTaskConfigurationService.getConfigurations();
@@ -119,14 +130,14 @@ public class CronTaskConfigurationRestlet
         return Response.ok(configList).build();
     }
 
-    @POST
+    @PUT
     @Path("/crontask/{name}/upload/groovy")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response uploadGroovyScript(@PathParam("name") String name,
-                           @FormDataParam("file") InputStream inputStream,
-                           @FormDataParam("file") FormDataContentDisposition formDataContentDisposition)
+                                       @Context HttpHeaders headers,
+                                       @Context HttpServletRequest request,
+                                       InputStream is)
     {
-        String fileName = formDataContentDisposition.getFileName();
+        String fileName = headers.getRequestHeader("fileName").get(0);
         if (!fileName.endsWith(".groovy"))
         {
             return Response.status(Response.Status.BAD_REQUEST)
@@ -147,19 +158,32 @@ public class CronTaskConfigurationRestlet
         cronTaskConfiguration.addProperty("jobClass", GroovyCronJob.class.getName());
         cronTaskConfiguration.addProperty("script.path", path + "/" + fileName);
 
-        logger.info("Upload script");
         try
         {
-            FileUtils.writeToFile(inputStream, path);
+            FileUtils.writeToFile(is, path, fileName);
             cronTaskConfigurationService.saveConfiguration(cronTaskConfiguration);
         }
         catch (ClassNotFoundException | SchedulerException | CronTaskException | InstantiationException | IllegalAccessException e)
         {
-            logger.trace(e.getMessage(), e);
+            logger.error(e.getMessage(), e);
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         }
 
         return Response.ok().build();
     }
 
+    @GET
+    @Path("/groovy/names")
+    @Produces({ MediaType.APPLICATION_JSON,
+                MediaType.APPLICATION_XML })
+    public Response getGroovyScriptsName()
+    {
+        List<String> list = cronTaskConfigurationService.getGroovyScriptsName();
+
+        GenericEntity<List<String>> genericEntity = new GenericEntity<List<String>>(list)
+        {
+        };
+
+        return Response.ok(genericEntity).build();
+    }
 }

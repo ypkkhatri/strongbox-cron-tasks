@@ -6,18 +6,12 @@ import org.carlspring.strongbox.crontask.exceptions.CronTaskNotFoundException;
 import org.carlspring.strongbox.crontask.test.MyTask;
 
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBException;
-import java.io.File;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 
-import org.glassfish.jersey.media.multipart.FormDataBodyPart;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,27 +30,45 @@ import static org.junit.Assert.assertEquals;
 public class CronTaskConfigurationRestletTest
 {
 
-    private static final Logger logger = LoggerFactory.getLogger(CronTaskConfigurationRestlet.class);
+    private static final Logger logger = LoggerFactory.getLogger(CronTaskConfigurationRestletTest.class);
 
     protected TestClient client;
 
     private final String cronName = "CRJ001";
 
     @Test
-    public void testCronTaskConfiguration()
+    public void testJavaCronTaskConfiguration()
             throws ClassNotFoundException,
                    SchedulerException,
                    CronTaskNotFoundException,
                    UnsupportedEncodingException,
                    JAXBException
     {
-        client = TestClient.getTestInstance();
-//        saveJavaConfig("0 0/1 * 1/1 * ? *");
-//        saveJavaConfig("0 0/2 * 1/1 * ? *");
-//        deleteConfig();
+        if(client == null)
+            client = TestClient.getTestInstance();
+        saveJavaConfig("0 0/1 * 1/1 * ? *");
+//        saveJavaConfig("0 0/2 * 1/1 * ? *"); // Remove comments to test cron job execution
+        deleteConfig();
+    }
+
+    @Test
+    public void testGroovyCronTaskConfiguration()
+            throws ClassNotFoundException,
+                   SchedulerException,
+                   CronTaskNotFoundException,
+                   UnsupportedEncodingException,
+                   JAXBException
+    {
+        if(client == null)
+            client = TestClient.getTestInstance();
+
         saveGroovyConfig("0 0/1 * 1/1 * ? *");
         uploadGroovyScript();
+//        listOfGroovyScriptsName();
+//        saveGroovyConfig("0 0/2 * 1/1 * ? *"); // Remove comments to test cron job execution
+        deleteConfig();
     }
+
 
     @After
     public void tearDown()
@@ -118,7 +130,6 @@ public class CronTaskConfigurationRestletTest
         CronTaskConfiguration configuration = new CronTaskConfiguration();
         configuration.setName(cronName);
         configuration.addProperty("cronExpression", cronExpression);
-//        configuration.addProperty("jobClass", MyTask.class.getName());
 
         WebTarget resource = client.getClientInstance().target(url);
 
@@ -175,27 +186,46 @@ public class CronTaskConfigurationRestletTest
 
     public void uploadGroovyScript()
     {
-        File file = new File("./" + "src\\test\\resources\\GroovyTask.groovy");
+        String fileName = "GroovyTask.groovy";
+        String contentDisposition = "attachment; filename=\"" + fileName + "\"";
+
+        File file = new File("./" + "src\\test\\resources\\" + fileName);
 
         String path = client.getContextBaseUrl() + "/configuration/crontasks/crontask/" + cronName + "/upload/groovy";
 
-        WebTarget resource = client.getClientInstance().target(path);
-        client.getClientInstance().property("Content-Type", MediaType.MULTIPART_FORM_DATA);
-        Invocation.Builder builder = resource.request();
-
-        FormDataMultiPart formDataMultiPart = new FormDataMultiPart();
-        formDataMultiPart.bodyPart(new FileDataBodyPart("file", file, MediaType.APPLICATION_OCTET_STREAM_TYPE));
-        formDataMultiPart.bodyPart(new FormDataBodyPart("name", file.getName()));
-//        multipartFormDataOutput.addFormData("uploadedFile", new FileInputStream(filePath), MediaType.MULTIPART_FORM_DATA_TYPE, filename);
-        GenericEntity<FormDataMultiPart> genericEntity = new GenericEntity<FormDataMultiPart>(formDataMultiPart)
+        Response response = null;
+        try
         {
-        };
+            InputStream is = new FileInputStream(file);
+            WebTarget resource = client.getClientInstance().target(path);
+            response = resource.request(MediaType.APPLICATION_OCTET_STREAM)
+                               .header("Content-Disposition", contentDisposition)
+                               .header("fileName", fileName)
+                               .put(Entity.entity(is, MediaType.APPLICATION_OCTET_STREAM));
 
-        Response response = builder.post(Entity.entity(genericEntity, MediaType.MULTIPART_FORM_DATA_TYPE));
+        }
+        catch (FileNotFoundException e)
+        {
+            logger.error("Error: ", e);
+        }
 
         int status = response.getStatus();
 
         assertEquals("Failed to upload groovy script!", Response.ok().build().getStatus(), status);
     }
 
+    public void listOfGroovyScriptsName() {
+        /**
+         * Retrieve list of Groovy scripts file name
+         * */
+        String url = client.getContextBaseUrl() +
+              "/configuration/crontasks/groovy/names";
+        WebTarget resource = client.getClientInstance().target(url);
+
+        Response response = resource.request(MediaType.APPLICATION_JSON).get();
+
+        int status = response.getStatus();
+
+        assertEquals("Failed to get groovy scripts names!", Response.ok().build().getStatus(), status);
+    }
 }

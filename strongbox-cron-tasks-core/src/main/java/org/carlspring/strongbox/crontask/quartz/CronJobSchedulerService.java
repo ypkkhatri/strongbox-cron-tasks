@@ -1,10 +1,10 @@
 package org.carlspring.strongbox.crontask.quartz;
 
+import org.carlspring.strongbox.crontask.api.jobs.GroovyCronJob;
 import org.carlspring.strongbox.crontask.exceptions.CronTaskNotFoundException;
 import org.carlspring.strongbox.crontask.configuration.CronTaskConfiguration;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.quartz.*;
 import org.slf4j.Logger;
@@ -40,12 +40,14 @@ public class CronJobSchedulerService
 
             org.quartz.Trigger newTrigger = TriggerBuilder.newTrigger().withIdentity(
                     cronTaskConfiguration.getName()).withSchedule(
-                    CronScheduleBuilder.cronSchedule(cronTaskConfiguration.getProperty("cronExpression").toString())).build();
+                    CronScheduleBuilder.cronSchedule(
+                            cronTaskConfiguration.getProperty("cronExpression").toString())).build();
 
             scheduler.addJob(jobDetail, true, true);
             scheduler.rescheduleJob(oldTrigger.getKey(), newTrigger);
 
             cronTaskStruct.setTrigger(newTrigger);
+            cronTaskStruct.setScriptName(cronTaskConfiguration.getProperty("fileName"));
         }
         else
         {
@@ -53,18 +55,22 @@ public class CronJobSchedulerService
             jobDataMap.put("configuration", cronTaskConfiguration);
 
             JobDetail jobDetail = JobBuilder.newJob(
-                    (Class<? extends Job>) Class.forName(cronTaskConfiguration.getProperty("jobClass").toString())).withIdentity(
+                    (Class<? extends Job>) Class.forName(
+                            cronTaskConfiguration.getProperty("jobClass"))).withIdentity(
                     cronTaskConfiguration.getName()).setJobData(jobDataMap).build();
 
-            org.quartz.Trigger trigger = TriggerBuilder.newTrigger().withIdentity(
+            org.quartz.Trigger trigger;
+            trigger = TriggerBuilder.newTrigger().withIdentity(
                     cronTaskConfiguration.getName()).withSchedule(
-                    CronScheduleBuilder.cronSchedule(cronTaskConfiguration.getProperty("cronExpression").toString())).build();
+                    CronScheduleBuilder.cronSchedule(
+                            cronTaskConfiguration.getProperty("cronExpression"))).build();
 
             scheduler.scheduleJob(jobDetail, trigger);
 
             CronTaskStruct cronTaskStruct = new CronTaskStruct();
             cronTaskStruct.setJobDetail(jobDetail);
             cronTaskStruct.setTrigger(trigger);
+            cronTaskStruct.setScriptName(cronTaskConfiguration.getProperty("fileName"));
             jobsMap.put(cronTaskConfiguration.getName(), cronTaskStruct);
         }
 
@@ -95,5 +101,19 @@ public class CronJobSchedulerService
         jobsMap.remove(cronTaskConfiguration.getName());
 
         logger.debug("Job un-scheduled successfully");
+    }
+
+    public List<String> getGroovyScriptsName()
+    {
+        List<String> list = Collections.emptyList();
+        for (CronTaskStruct struct : jobsMap.values())
+        {
+            if (struct.getScriptName() != null && !struct.getScriptName().isEmpty() &&
+                struct.getScriptName().endsWith(".groovy"))
+            {
+                list.add(struct.getScriptName());
+            }
+        }
+        return list;
     }
 }

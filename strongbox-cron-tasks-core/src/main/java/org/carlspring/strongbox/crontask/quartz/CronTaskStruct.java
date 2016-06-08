@@ -10,6 +10,7 @@ public class CronTaskStruct
 {
     private JobDetail jobDetail;
     private Trigger trigger;
+    private String scriptName;
 
     public JobDetail getJobDetail()
     {
@@ -29,5 +30,15 @@ public class CronTaskStruct
     public void setTrigger(Trigger trigger)
     {
         this.trigger = trigger;
+    }
+
+    public String getScriptName()
+    {
+        return scriptName;
+    }
+
+    public void setScriptName(String scriptName)
+    {
+        this.scriptName = scriptName;
     }
 }
