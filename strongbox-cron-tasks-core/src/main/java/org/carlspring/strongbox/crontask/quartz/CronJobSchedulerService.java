@@ -1,6 +1,5 @@
 package org.carlspring.strongbox.crontask.quartz;
 
-import org.carlspring.strongbox.crontask.api.jobs.GroovyCronJob;
 import org.carlspring.strongbox.crontask.exceptions.CronTaskNotFoundException;
 import org.carlspring.strongbox.crontask.configuration.CronTaskConfiguration;
 
@@ -26,7 +25,7 @@ public class CronJobSchedulerService
     @Autowired
     private SchedulerFactoryBean schedulerFactoryBean;
 
-    private Map<String, CronTaskStruct> jobsMap = new HashMap<>();
+    private Map<String, CronTask> jobsMap = new HashMap<>();
 
     public void scheduleJob(CronTaskConfiguration cronTaskConfiguration)
             throws ClassNotFoundException, SchedulerException
@@ -34,9 +33,9 @@ public class CronJobSchedulerService
         Scheduler scheduler = schedulerFactoryBean.getScheduler();
         if (jobsMap.containsKey(cronTaskConfiguration.getName()))
         {
-            CronTaskStruct cronTaskStruct = jobsMap.get(cronTaskConfiguration.getName());
-            JobDetail jobDetail = cronTaskStruct.getJobDetail();
-            org.quartz.Trigger oldTrigger = cronTaskStruct.getTrigger();
+            CronTask cronTask = jobsMap.get(cronTaskConfiguration.getName());
+            JobDetail jobDetail = cronTask.getJobDetail();
+            org.quartz.Trigger oldTrigger = cronTask.getTrigger();
 
             org.quartz.Trigger newTrigger = TriggerBuilder.newTrigger().withIdentity(
                     cronTaskConfiguration.getName()).withSchedule(
@@ -46,8 +45,8 @@ public class CronJobSchedulerService
             scheduler.addJob(jobDetail, true, true);
             scheduler.rescheduleJob(oldTrigger.getKey(), newTrigger);
 
-            cronTaskStruct.setTrigger(newTrigger);
-            cronTaskStruct.setScriptName(cronTaskConfiguration.getProperty("fileName"));
+            cronTask.setTrigger(newTrigger);
+            cronTask.setScriptName(cronTaskConfiguration.getProperty("fileName"));
         }
         else
         {
@@ -67,11 +66,11 @@ public class CronJobSchedulerService
 
             scheduler.scheduleJob(jobDetail, trigger);
 
-            CronTaskStruct cronTaskStruct = new CronTaskStruct();
-            cronTaskStruct.setJobDetail(jobDetail);
-            cronTaskStruct.setTrigger(trigger);
-            cronTaskStruct.setScriptName(cronTaskConfiguration.getProperty("fileName"));
-            jobsMap.put(cronTaskConfiguration.getName(), cronTaskStruct);
+            CronTask cronTask = new CronTask();
+            cronTask.setJobDetail(jobDetail);
+            cronTask.setTrigger(trigger);
+            cronTask.setScriptName(cronTaskConfiguration.getProperty("fileName"));
+            jobsMap.put(cronTaskConfiguration.getName(), cronTask);
         }
 
         if (!scheduler.isStarted())
@@ -79,6 +78,7 @@ public class CronJobSchedulerService
             logger.debug("Scheduler started");
             scheduler.start();
         }
+
         logger.debug("Job scheduled successfully");
     }
 
@@ -91,9 +91,9 @@ public class CronJobSchedulerService
             throw new CronTaskNotFoundException("Cron Task not found on given name");
         }
 
-        CronTaskStruct cronTaskStruct = jobsMap.get(cronTaskConfiguration.getName());
-        JobDetail jobDetail = cronTaskStruct.getJobDetail();
-        org.quartz.Trigger trigger = cronTaskStruct.getTrigger();
+        CronTask cronTask = jobsMap.get(cronTaskConfiguration.getName());
+        JobDetail jobDetail = cronTask.getJobDetail();
+        org.quartz.Trigger trigger = cronTask.getTrigger();
 
         scheduler.unscheduleJob(trigger.getKey());
         scheduler.deleteJob(jobDetail.getKey());
@@ -106,7 +106,7 @@ public class CronJobSchedulerService
     public List<String> getGroovyScriptsName()
     {
         List<String> list = Collections.emptyList();
-        for (CronTaskStruct struct : jobsMap.values())
+        for (CronTask struct : jobsMap.values())
         {
             if (struct.getScriptName() != null && !struct.getScriptName().isEmpty() &&
                 struct.getScriptName().endsWith(".groovy"))
@@ -114,6 +114,7 @@ public class CronJobSchedulerService
                 list.add(struct.getScriptName());
             }
         }
+
         return list;
     }
 }

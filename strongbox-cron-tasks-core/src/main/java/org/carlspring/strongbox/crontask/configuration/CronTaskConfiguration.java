@@ -26,6 +26,7 @@ public class CronTaskConfiguration
     @XmlElement(name = "properties")
     private Map<String, String> properties = new HashMap<>();
 
+
     public CronTaskConfiguration()
     {
     }
@@ -79,4 +80,5 @@ public class CronTaskConfiguration
     public boolean contain(String key) {
         return properties.containsKey(key);
     }
+
 }

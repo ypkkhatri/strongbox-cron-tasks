@@ -1,4 +1,4 @@
-package org.carlspring.strongbox.crontask.adpaters;
+package org.carlspring.strongbox.crontask.xml.adapters;
 
 import javax.xml.bind.annotation.XmlElement;
 

@@ -15,4 +15,5 @@ public class CronTasksConfig
     {
         return new SchedulerFactoryBean();
     }
+
 }

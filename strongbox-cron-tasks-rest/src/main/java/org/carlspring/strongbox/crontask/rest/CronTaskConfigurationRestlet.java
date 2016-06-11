@@ -5,13 +5,12 @@ import org.carlspring.strongbox.crontask.configuration.CronTaskConfiguration;
 import org.carlspring.strongbox.crontask.exceptions.CronTaskException;
 import org.carlspring.strongbox.crontask.exceptions.CronTaskNotFoundException;
 import org.carlspring.strongbox.crontask.services.CronTaskConfigurationService;
-import org.carlspring.strongbox.crontask.utils.FileUtils;
 import org.carlspring.strongbox.resource.ConfigurationResourceResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-import java.io.InputStream;
+import java.io.*;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -84,11 +83,17 @@ public class CronTaskConfigurationRestlet
 
                 if (classInstance instanceof GroovyCronJob)
                 {
-                    FileUtils.deleteFile(config.getProperty("script.path"));
+                    File file = new File(config.getProperty("script.path"));
+                    if (file.exists())
+                    {
+                        //noinspection ResultOfMethodCallIgnored
+                        file.delete();
+                    }
                 }
             }
         }
-        catch (ClassNotFoundException | SchedulerException | CronTaskNotFoundException | InstantiationException | IllegalAccessException ex)
+        catch (ClassNotFoundException | SchedulerException | CronTaskNotFoundException |
+               InstantiationException | IllegalAccessException ex)
         {
             return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
         }
@@ -131,8 +136,8 @@ public class CronTaskConfigurationRestlet
     }
 
     @PUT
-    @Path("/crontask/{name}/upload/groovy")
-    public Response uploadGroovyScript(@PathParam("name") String name,
+    @Path("/crontask/groovy")
+    public Response uploadGroovyScript(@QueryParam("cronName") String cronName,
                                        @Context HttpHeaders headers,
                                        @Context HttpServletRequest request,
                                        InputStream is)
@@ -145,7 +150,7 @@ public class CronTaskConfigurationRestlet
                            .build();
         }
 
-        CronTaskConfiguration cronTaskConfiguration = cronTaskConfigurationService.getConfiguration(name);
+        CronTaskConfiguration cronTaskConfiguration = cronTaskConfigurationService.getConfiguration(cronName);
         if (cronTaskConfiguration == null)
         {
             return Response.status(Response.Status.BAD_REQUEST)
@@ -154,13 +159,14 @@ public class CronTaskConfigurationRestlet
         }
 
         String path = ConfigurationResourceResolver.getVaultDirectory() + "/etc/conf/cron/groovy";
+
         cronTaskConfiguration.addProperty("fileName", fileName);
         cronTaskConfiguration.addProperty("jobClass", GroovyCronJob.class.getName());
         cronTaskConfiguration.addProperty("script.path", path + "/" + fileName);
 
         try
         {
-            FileUtils.writeToFile(is, path, fileName);
+            storeGroovyCronTask(is, path, fileName);
             cronTaskConfigurationService.saveConfiguration(cronTaskConfiguration);
         }
         catch (ClassNotFoundException | SchedulerException | CronTaskException | InstantiationException | IllegalAccessException e)
@@ -186,4 +192,37 @@ public class CronTaskConfigurationRestlet
 
         return Response.ok(genericEntity).build();
     }
+
+    private void storeGroovyCronTask(InputStream is,
+                                     String dirPath,
+                                     String fileName)
+            throws CronTaskException
+    {
+        File dir = new File(dirPath);
+
+        if (!dir.exists())
+        {
+            //noinspection ResultOfMethodCallIgnored
+            dir.mkdirs();
+        }
+
+        File file = new File(dirPath + "/" + fileName);
+
+        try (OutputStream out = new FileOutputStream(file))
+        {
+            int read = 0;
+            byte[] bytes = new byte[1024];
+
+            while ((read = is.read(bytes)) != -1)
+            {
+                out.write(bytes, 0, read);
+            }
+            out.flush();
+        }
+        catch (IOException e)
+        {
+            throw new CronTaskException(e);
+        }
+    }
+
 }

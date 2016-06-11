@@ -24,6 +24,8 @@ public class CronTaskApplication
     {
         Set<Class<?>> resources = new java.util.HashSet<>();
         resources.add(MultiPartFeature.class);
+
         return resources;
     }
+
 }

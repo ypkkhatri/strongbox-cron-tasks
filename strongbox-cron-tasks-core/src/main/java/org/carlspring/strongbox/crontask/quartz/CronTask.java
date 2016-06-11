@@ -6,11 +6,15 @@ import org.quartz.Trigger;
 /**
  * @author Yougeshwar
  */
-public class CronTaskStruct
+public class CronTask
 {
+
     private JobDetail jobDetail;
+
     private Trigger trigger;
+
     private String scriptName;
+
 
     public JobDetail getJobDetail()
     {
@@ -41,4 +45,5 @@ public class CronTaskStruct
     {
         this.scriptName = scriptName;
     }
+
 }

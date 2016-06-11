@@ -17,8 +17,7 @@ import static org.carlspring.strongbox.crontask.db.DbUtils.withDatabase;
 public class CronTaskConfigurationRepository
 {
 
-    private static final Logger logger =
-            LoggerFactory.getLogger(CronTaskConfigurationRepository.class);
+    private static final Logger logger = LoggerFactory.getLogger(CronTaskConfigurationRepository.class);
 
     public CronTaskConfigurationRepository()
     {
@@ -43,11 +42,9 @@ public class CronTaskConfigurationRepository
 
         return withDatabase(db -> {
             List<CronTaskConfiguration> result =
-                    db.query(
-                            new OSQLSynchQuery<CronTaskConfiguration>("SELECT * FROM CronTaskConfiguration WHERE name = '" +
-                                                                      name + "'"));
-            CronTaskConfiguration cronTaskConfiguration =
-                    !result.isEmpty() ? result.get(0) : null;
+                    db.query(new OSQLSynchQuery<CronTaskConfiguration>("SELECT * FROM CronTaskConfiguration" +
+                                                                       " WHERE name = '" + name + "'"));
+            CronTaskConfiguration cronTaskConfiguration = !result.isEmpty() ? result.get(0) : null;
 
             return db.<CronTaskConfiguration>detachAll(cronTaskConfiguration, true);
         });
@@ -99,4 +96,5 @@ public class CronTaskConfigurationRepository
             return true;
         });
     }
+
 }

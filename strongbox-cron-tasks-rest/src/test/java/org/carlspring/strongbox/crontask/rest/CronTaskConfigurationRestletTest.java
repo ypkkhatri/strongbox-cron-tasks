@@ -13,6 +13,7 @@ import javax.xml.bind.JAXBException;
 import java.io.*;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.quartz.SchedulerException;
@@ -36,6 +37,23 @@ public class CronTaskConfigurationRestletTest
 
     private final String cronName = "CRJ001";
 
+
+    @Before
+    public void setUp() throws Exception
+    {
+        client = TestClient.getTestInstance();;
+    }
+
+    @After
+    public void tearDown()
+            throws Exception
+    {
+        if (client != null)
+        {
+            client.close();
+        }
+    }
+
     @Test
     public void testJavaCronTaskConfiguration()
             throws ClassNotFoundException,
@@ -44,8 +62,6 @@ public class CronTaskConfigurationRestletTest
                    UnsupportedEncodingException,
                    JAXBException
     {
-        if(client == null)
-            client = TestClient.getTestInstance();
         saveJavaConfig("0 0/1 * 1/1 * ? *");
 //        saveJavaConfig("0 0/2 * 1/1 * ? *"); // Remove comments to test cron job execution
         deleteConfig();
@@ -59,25 +75,11 @@ public class CronTaskConfigurationRestletTest
                    UnsupportedEncodingException,
                    JAXBException
     {
-        if(client == null)
-            client = TestClient.getTestInstance();
-
         saveGroovyConfig("0 0/1 * 1/1 * ? *");
         uploadGroovyScript();
 //        listOfGroovyScriptsName();
 //        saveGroovyConfig("0 0/2 * 1/1 * ? *"); // Remove comments to test cron job execution
         deleteConfig();
-    }
-
-
-    @After
-    public void tearDown()
-            throws Exception
-    {
-        if (client != null)
-        {
-            client.close();
-        }
     }
 
     public void saveJavaConfig(String cronExpression)
@@ -147,9 +149,8 @@ public class CronTaskConfigurationRestletTest
         /**
          * Retrieve saved configuration
          * */
-        url = client.getContextBaseUrl() +
-              "/configuration/crontasks/crontask?" +
-              "name=" + cronName;
+        url = client.getContextBaseUrl() + "/configuration/crontasks/crontask?name=" + cronName;
+
         resource = client.getClientInstance().target(url);
 
         response = resource.request(MediaType.APPLICATION_JSON).get();
@@ -162,8 +163,7 @@ public class CronTaskConfigurationRestletTest
 
     public void deleteConfig()
     {
-        String path = "/configuration/crontasks/crontask?" +
-                      "name=" + cronName;
+        String path = "/configuration/crontasks/crontask?name=" + cronName;
 
         Response response = client.delete(path);
         assertEquals("Failed to delete job!", Response.ok().build().getStatus(), response.getStatus());
@@ -180,7 +180,8 @@ public class CronTaskConfigurationRestletTest
 
         int status = response.getStatus();
 
-        assertEquals("Cron task config exists!", Response.status(Response.Status.BAD_REQUEST).build().getStatus(),
+        assertEquals("Cron task config exists!",
+                     Response.status(Response.Status.BAD_REQUEST).build().getStatus(),
                      status);
     }
 
@@ -189,9 +190,9 @@ public class CronTaskConfigurationRestletTest
         String fileName = "GroovyTask.groovy";
         String contentDisposition = "attachment; filename=\"" + fileName + "\"";
 
-        File file = new File("./" + "src\\test\\resources\\" + fileName);
+        File file = new File("target/test-classes/groovy/" + fileName);
 
-        String path = client.getContextBaseUrl() + "/configuration/crontasks/crontask/" + cronName + "/upload/groovy";
+        String path = client.getContextBaseUrl() + "/configuration/crontasks/crontask/groovy?cronName=" + cronName;
 
         Response response = null;
         try
@@ -228,4 +229,5 @@ public class CronTaskConfigurationRestletTest
 
         assertEquals("Failed to get groovy scripts names!", Response.ok().build().getStatus(), status);
     }
+
 }

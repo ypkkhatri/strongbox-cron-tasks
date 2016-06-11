@@ -18,8 +18,7 @@ import java.util.List;
 public class CronTaskConfigurationService
 {
 
-    private final Logger logger =
-            LoggerFactory.getLogger(CronTaskConfigurationService.class);
+    private final Logger logger = LoggerFactory.getLogger(CronTaskConfigurationService.class);
 
     @Autowired
     private CronTaskConfigurationRepository cronTaskConfigurationRepository;
@@ -36,13 +35,15 @@ public class CronTaskConfigurationService
     {
         logger.debug("CronTaskConfigurationService.saveConfiguration()");
 
-        if(!cronTaskConfiguration.contain("cronExpression")) {
+        if(!cronTaskConfiguration.contain("cronExpression"))
+        {
             throw new CronTaskException("cronExpression property does not exists");
         }
 
         cronTaskConfigurationRepository.saveConfiguration(cronTaskConfiguration);
 
-        if(cronTaskConfiguration.contain("jobClass")) {
+        if (cronTaskConfiguration.contain("jobClass"))
+        {
             Class c = Class.forName(cronTaskConfiguration.getProperty("jobClass"));
             Object classInstance = c.newInstance();
 
@@ -52,6 +53,7 @@ public class CronTaskConfigurationService
             {
                 throw new CronTaskException(c + " does not extend " + AbstractCronJob.class);
             }
+
             cronJobSchedulerService.scheduleJob(cronTaskConfiguration);
         }
     }
@@ -87,6 +89,5 @@ public class CronTaskConfigurationService
 
         return cronJobSchedulerService.getGroovyScriptsName();
     }
-
 
 }
