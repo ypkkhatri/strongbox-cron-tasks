@@ -105,7 +105,7 @@ public class CronJobSchedulerService
 
     public List<String> getGroovyScriptsName()
     {
-        List<String> list = Collections.emptyList();
+        List<String> list = new ArrayList<>();
         for (CronTask struct : jobsMap.values())
         {
             if (struct.getScriptName() != null && !struct.getScriptName().isEmpty() &&

@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * @author Yougeshwar
  */
-@XmlRootElement(name = "cron-task-configuration")
+@XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CronTaskConfiguration
 {
