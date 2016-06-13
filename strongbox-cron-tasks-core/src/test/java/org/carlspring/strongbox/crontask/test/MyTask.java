@@ -2,13 +2,11 @@ package org.carlspring.strongbox.crontask.test;
 
 import org.carlspring.strongbox.crontask.api.jobs.JavaCronJob;
 
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.Scheduler;
-import org.quartz.UnableToInterruptJobException;
+import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 /**
  * @author Yougeshwar
@@ -19,9 +17,6 @@ public class MyTask
 
     private final Logger logger = LoggerFactory.getLogger(MyTask.class);
 
-    @Autowired
-    private Scheduler schedulerFactoryBean;
-
     @Override
     protected void executeInternal(JobExecutionContext jobExecutionContext)
             throws JobExecutionException
@@ -30,9 +25,9 @@ public class MyTask
 
         try
         {
-            schedulerFactoryBean.interrupt(jobExecutionContext.getJobDetail().getKey());
+            getSchedulerFactoryBean().getScheduler().deleteJob(getCronTask().getJobDetail().getKey());
         }
-        catch (UnableToInterruptJobException e)
+        catch (SchedulerException e)
         {
             logger.error("Stop job error", e);
             e.printStackTrace();

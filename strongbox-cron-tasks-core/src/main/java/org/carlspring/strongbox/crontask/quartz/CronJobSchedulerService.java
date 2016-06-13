@@ -50,8 +50,12 @@ public class CronJobSchedulerService
         }
         else
         {
+            CronTask cronTask = new CronTask();
+
             JobDataMap jobDataMap = new JobDataMap();
             jobDataMap.put("configuration", cronTaskConfiguration);
+            jobDataMap.put("schedulerFactoryBean", schedulerFactoryBean);
+            jobDataMap.put("cronTask", cronTask);
 
             JobDetail jobDetail = JobBuilder.newJob(
                     (Class<? extends Job>) Class.forName(
@@ -66,7 +70,6 @@ public class CronJobSchedulerService
 
             scheduler.scheduleJob(jobDetail, trigger);
 
-            CronTask cronTask = new CronTask();
             cronTask.setJobDetail(jobDetail);
             cronTask.setTrigger(trigger);
             cronTask.setScriptName(cronTaskConfiguration.getProperty("fileName"));

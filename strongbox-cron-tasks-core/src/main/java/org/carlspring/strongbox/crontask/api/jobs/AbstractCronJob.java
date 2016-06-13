@@ -1,15 +1,26 @@
 package org.carlspring.strongbox.crontask.api.jobs;
 
 import org.carlspring.strongbox.crontask.configuration.CronTaskConfiguration;
+import org.carlspring.strongbox.crontask.quartz.CronTask;
+
+import org.quartz.InterruptableJob;
+import org.quartz.UnableToInterruptJobException;
 import org.springframework.scheduling.quartz.QuartzJobBean;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 /**
  * @author carlspring
  */
-public abstract class AbstractCronJob extends QuartzJobBean
+public abstract class AbstractCronJob
+        extends QuartzJobBean
+        implements InterruptableJob
 {
 
     private CronTaskConfiguration configuration = new CronTaskConfiguration();
+
+    private SchedulerFactoryBean schedulerFactoryBean;
+
+    private CronTask cronTask;
 
 
     public CronTaskConfiguration getConfiguration()
@@ -22,4 +33,30 @@ public abstract class AbstractCronJob extends QuartzJobBean
         this.configuration = configuration;
     }
 
+    public SchedulerFactoryBean getSchedulerFactoryBean()
+    {
+        return schedulerFactoryBean;
+    }
+
+    public void setSchedulerFactoryBean(SchedulerFactoryBean schedulerFactoryBean)
+    {
+        this.schedulerFactoryBean = schedulerFactoryBean;
+    }
+
+    public CronTask getCronTask()
+    {
+        return cronTask;
+    }
+
+    public void setCronTask(CronTask cronTask)
+    {
+        this.cronTask = cronTask;
+    }
+
+    @Override
+    public void interrupt()
+            throws UnableToInterruptJobException
+    {
+
+    }
 }
