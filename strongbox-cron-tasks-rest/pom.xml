@@ -1,0 +1,496 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.carlspring.strongbox</groupId>
+        <artifactId>strongbox-parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>org.carlspring.strongbox</groupId>
+    <artifactId>strongbox-cron-tasks-rest</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <name>Strongbox: Cron Tasks Rest</name>
+
+    <licenses>
+        <license>
+            <name>Apache 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+
+    <organization>
+        <name>Carlspring Consulting &amp; Development Ltd.</name>
+        <url>http://www.carlspring.org/</url>
+    </organization>
+
+    <properties>
+        <version.jersey-multipart>1.19.1</version.jersey-multipart>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.carlspring.strongbox</groupId>
+            <artifactId>strongbox-web-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.carlspring.strongbox</groupId>
+            <artifactId>strongbox-cron-tasks-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-servlet-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.connectors</groupId>
+            <artifactId>jersey-apache-connector</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.ext</groupId>
+            <artifactId>jersey-spring3</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-moxy</artifactId>
+            <version>${version.jersey}</version>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <!-- These two profiles need to be on top: -->
+        <profile>
+            <id>reserve-ports</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+
+                        <executions>
+                            <execution>
+                                <id>reserve-network-port</id>
+                                <goals>
+                                    <goal>reserve-network-port</goal>
+                                </goals>
+                                <phase>initialize</phase>
+                                <configuration>
+                                    <portNames>
+                                        <portName>port.jetty.listen</portName>
+                                        <portName>port.jetty.shutdown</portName>
+                                    </portNames>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>set-default-ports</id>
+            <activation>
+                <property>
+                    <name>skipTests</name>
+                    <value>!true</value>
+                </property>
+
+                <activeByDefault>true</activeByDefault>
+            </activation>
+
+            <properties>
+                <!-- Default ports for local development: -->
+                <port.jetty.listen>48080</port.jetty.listen>
+                <port.jetty.shutdown>19081</port.jetty.shutdown>
+            </properties>
+        </profile>
+        <!-- These two profiles need to be on top. -->
+
+        <profile>
+            <!-- Required for the sake of the integration tests: -->
+            <id>set-strongbox-host-default</id>
+            <activation>
+                <property>
+                    <name>!strongbox.host</name>
+                </property>
+            </activation>
+
+            <properties>
+                <strongbox.host>localhost</strongbox.host>
+            </properties>
+        </profile>
+        <profile>
+            <id>set-strongbox-host</id>
+            <activation>
+                <property>
+                    <name>strongbox.host</name>
+                </property>
+            </activation>
+
+            <properties>
+                <strongbox.host>${strongbox.host}</strongbox.host>
+            </properties>
+        </profile>
+        <profile>
+            <!-- Required for the sake of the integration tests: -->
+            <id>set-strongbox-port-default</id>
+            <activation>
+                <property>
+                    <name>!strongbox.port</name>
+                </property>
+            </activation>
+
+            <properties>
+                <strongbox.port>${port.jetty.listen}</strongbox.port>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>run-it-tests</id>
+            <activation>
+                <property>
+                    <name>!skipTests</name>
+                </property>
+            </activation>
+
+            <properties>
+                <dir.strongbox.home>${project.build.directory}/strongbox</dir.strongbox.home>
+                <dir.strongbox.vault>${project.build.directory}/strongbox-vault</dir.strongbox.vault>
+                <dir.jetty.etc>${dir.strongbox.home}/etc/jetty</dir.jetty.etc>
+            </properties>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+
+                        <executions>
+                            <execution>
+                                <id>unpack-resources-logging</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>${project.groupId}</groupId>
+                                            <artifactId>strongbox-common-resources</artifactId>
+                                            <version>${project.version}</version>
+                                            <type>jar</type>
+
+                                            <overWrite>true</overWrite>
+                                            <outputDirectory>${dir.strongbox.home}/etc</outputDirectory>
+                                            <includes>logback.xml</includes>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>unpack-resources-etc</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>${project.groupId}</groupId>
+                                            <artifactId>strongbox-common-resources</artifactId>
+                                            <version>${project.version}</version>
+                                            <type>jar</type>
+
+                                            <overWrite>true</overWrite>
+                                            <outputDirectory>${dir.strongbox.home}</outputDirectory>
+                                            <includes>etc/**</includes>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>unpack-storage-resources</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>${project.groupId}</groupId>
+                                            <artifactId>strongbox-common-resources</artifactId>
+                                            <version>${project.version}</version>
+                                            <type>jar</type>
+
+                                            <overWrite>true</overWrite>
+                                            <outputDirectory>${dir.strongbox.home}/etc</outputDirectory>
+                                            <includes>logback.xml</includes>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>${project.groupId}</groupId>
+                                            <artifactId>strongbox-storage-api-resources</artifactId>
+                                            <version>${project.version}</version>
+                                            <type>jar</type>
+
+                                            <overWrite>true</overWrite>
+                                            <outputDirectory>${dir.strongbox.vault}</outputDirectory>
+                                            <includes>etc/conf/strongbox.xml</includes>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>unpack-web-resources</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>${project.groupId}</groupId>
+                                            <artifactId>strongbox-web-resources</artifactId>
+                                            <version>${project.version}</version>
+                                            <type>jar</type>
+
+                                            <overWrite>true</overWrite>
+                                            <outputDirectory>${dir.strongbox.home}</outputDirectory>
+                                            <includes>etc/**,webapp/**</includes>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>jetty-maven-plugin</artifactId>
+
+                        <configuration>
+                            <scanIntervalSeconds>10</scanIntervalSeconds>
+
+                            <daemon>true</daemon>
+
+                            <webApp>
+                                <contextPath>/</contextPath>
+                                <descriptor>${dir.strongbox.home}/webapp/WEB-INF/web.xml</descriptor>
+                            </webApp>
+
+                            <stopPort>${port.jetty.shutdown}</stopPort>
+                            <stopKey>53AS9DS1FD8E3WEFEW9GR1ER8G2ER0WE31</stopKey>
+                            <stopWait>10</stopWait>
+                            <useTestClasspath>true</useTestClasspath>
+
+                            <httpConnector>
+                                <port>${port.jetty.listen}</port>
+                            </httpConnector>
+
+                            <useTestScope>true</useTestScope>
+
+                            <systemProperties>
+                                <force>true</force>
+
+                                <systemProperty>
+                                    <name>strongbox.home</name>
+                                    <value>${dir.strongbox.home}</value>
+                                </systemProperty>
+                                <systemProperty>
+                                    <name>strongbox.vault</name>
+                                    <value>${dir.strongbox.vault}</value>
+                                </systemProperty>
+                                <systemProperty>
+                                    <name>repository.config.xml</name>
+                                    <value>${dir.strongbox.home}/etc/conf/strongbox.xml</value>
+                                </systemProperty>
+                                <systemProperty>
+                                    <name>strongbox.storage.booter.basedir</name>
+                                    <value>${dir.strongbox.vault}/storages</value>
+                                </systemProperty>
+                                <systemProperty>
+                                    <name>logging.dir</name>
+                                    <value>${dir.strongbox.home}/logs</value>
+                                </systemProperty>
+                                <systemProperty>
+                                    <name>logging.config.file</name>
+                                    <value>${dir.strongbox.home}/etc/logback.xml</value>
+                                </systemProperty>
+                                <systemProperty>
+                                    <name>logback.configurationFile</name>
+                                    <value>${dir.strongbox.home}/etc/logback.xml</value>
+                                </systemProperty>
+                            </systemProperties>
+
+                            <useTestScope>true</useTestScope>
+
+                            <!-- Restore the following for SSL/HTTPSL when the time comes:
+                            <jettyXml>${dir.jetty.etc}/jetty.xml,${dir.jetty.etc}/jetty-http.xml,${dir.jetty.etc}/jetty-ssl.xml,${dir.jetty.etc}/jetty-https.xml</jettyXml>
+                            -->
+                            <jettyXml>${dir.jetty.etc}/jetty.xml,${dir.jetty.etc}/jetty-http.xml</jettyXml>
+                            <webAppSourceDirectory>${project.build.directory}/strongbox/webapp</webAppSourceDirectory>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <strongbox.home>${project.build.directory}/strongbox</strongbox.home>
+                                <strongbox.vault>${project.build.directory}/strongbox-vault</strongbox.vault>
+                                <strongbox.storage.booter.basedir>${project.build.directory}/strongbox-vault/storages
+                                </strongbox.storage.booter.basedir>
+                                <strongbox.host>${strongbox.host}</strongbox.host>
+                                <strongbox.port>${strongbox.port}</strongbox.port>
+                                <logging.dir>${project.build.directory}/strongbox/logs</logging.dir>
+                                <logging.config.file>${project.build.directory}/strongbox/etc/logback.xml
+                                </logging.config.file>
+                                <logback.configurationFile>${dir.strongbox.home}/etc/logback.xml
+                                </logback.configurationFile>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>jetty-start</id>
+            <activation>
+                <property>
+                    <name>!jetty.block</name>
+                </property>
+            </activation>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>jetty-maven-plugin</artifactId>
+
+                        <configuration>
+                            <daemon>true</daemon>
+                        </configuration>
+
+                        <executions>
+                            <execution>
+                                <id>jetty-start</id>
+
+                                <phase>test-compile</phase>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>jetty-block</id>
+            <activation>
+                <property>
+                    <name>jetty.block</name>
+                </property>
+            </activation>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>jetty-maven-plugin</artifactId>
+
+                        <configuration>
+                            <daemon>false</daemon>
+                        </configuration>
+
+                        <executions>
+                            <execution>
+                                <id>jetty-run</id>
+
+                                <phase>test-compile</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>
+
