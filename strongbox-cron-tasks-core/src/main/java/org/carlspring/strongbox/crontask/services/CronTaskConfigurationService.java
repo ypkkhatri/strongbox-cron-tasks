@@ -6,6 +6,8 @@ import org.carlspring.strongbox.crontask.configuration.CronTaskConfigurationRepo
 import org.carlspring.strongbox.crontask.exceptions.CronTaskException;
 import org.carlspring.strongbox.crontask.exceptions.CronTaskNotFoundException;
 import org.carlspring.strongbox.crontask.quartz.CronJobSchedulerService;
+import org.carlspring.strongbox.crontask.quartz.GroovyScriptNames;
+
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +85,7 @@ public class CronTaskConfigurationService
         return cronTaskConfigurationRepository.getConfigurations();
     }
 
-    public List<String> getGroovyScriptsName()
+    public GroovyScriptNames getGroovyScriptsName()
     {
         logger.debug("CronTaskConfigurationService.getGroovyScriptsName");
 

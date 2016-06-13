@@ -125,12 +125,6 @@
             <artifactId>jersey-media-moxy</artifactId>
             <version>${version.jersey}</version>
         </dependency>
-
-        <!--<dependency>-->
-            <!--<groupId>com.sun.jersey.contribs</groupId>-->
-            <!--<artifactId>jersey-multipart</artifactId>-->
-            <!--<version>${version.jersey-multipart}</version>-->
-        <!--</dependency>-->
     </dependencies>
 
     <profiles>
@@ -417,12 +411,15 @@
                             <systemPropertyVariables>
                                 <strongbox.home>${project.build.directory}/strongbox</strongbox.home>
                                 <strongbox.vault>${project.build.directory}/strongbox-vault</strongbox.vault>
-                                <strongbox.storage.booter.basedir>${project.build.directory}/strongbox-vault/storages</strongbox.storage.booter.basedir>
+                                <strongbox.storage.booter.basedir>${project.build.directory}/strongbox-vault/storages
+                                </strongbox.storage.booter.basedir>
                                 <strongbox.host>${strongbox.host}</strongbox.host>
                                 <strongbox.port>${strongbox.port}</strongbox.port>
                                 <logging.dir>${project.build.directory}/strongbox/logs</logging.dir>
-                                <logging.config.file>${project.build.directory}/strongbox/etc/logback.xml</logging.config.file>
-                                <logback.configurationFile>${dir.strongbox.home}/etc/logback.xml</logback.configurationFile>
+                                <logging.config.file>${project.build.directory}/strongbox/etc/logback.xml
+                                </logging.config.file>
+                                <logback.configurationFile>${dir.strongbox.home}/etc/logback.xml
+                                </logback.configurationFile>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>

@@ -39,9 +39,11 @@ public class CronTaskConfigurationRestletTest
 
 
     @Before
-    public void setUp() throws Exception
+    public void setUp()
+            throws Exception
     {
-        client = TestClient.getTestInstance();;
+        client = TestClient.getTestInstance();
+        ;
     }
 
     @After
@@ -215,12 +217,13 @@ public class CronTaskConfigurationRestletTest
         assertEquals("Failed to upload groovy script!", Response.ok().build().getStatus(), status);
     }
 
-    public void listOfGroovyScriptsName() {
+    public void listOfGroovyScriptsName()
+    {
         /**
          * Retrieve list of Groovy scripts file name
          * */
         String url = client.getContextBaseUrl() +
-              "/configuration/crontasks/groovy/names";
+                     "/configuration/crontasks/groovy/names";
         WebTarget resource = client.getClientInstance().target(url);
 
         Response response = resource.request(MediaType.APPLICATION_JSON).get();

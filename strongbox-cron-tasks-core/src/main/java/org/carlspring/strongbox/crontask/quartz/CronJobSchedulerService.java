@@ -103,18 +103,18 @@ public class CronJobSchedulerService
         logger.debug("Job un-scheduled successfully");
     }
 
-    public List<String> getGroovyScriptsName()
+    public GroovyScriptNames getGroovyScriptsName()
     {
-        List<String> list = new ArrayList<>();
+        GroovyScriptNames groovyScriptNames = new GroovyScriptNames();
         for (CronTask struct : jobsMap.values())
         {
             if (struct.getScriptName() != null && !struct.getScriptName().isEmpty() &&
                 struct.getScriptName().endsWith(".groovy"))
             {
-                list.add(struct.getScriptName());
+                groovyScriptNames.addName(struct.getScriptName());
             }
         }
 
-        return list;
+        return groovyScriptNames;
     }
 }

@@ -4,6 +4,7 @@ import org.carlspring.strongbox.crontask.api.jobs.GroovyCronJob;
 import org.carlspring.strongbox.crontask.configuration.CronTaskConfiguration;
 import org.carlspring.strongbox.crontask.exceptions.CronTaskException;
 import org.carlspring.strongbox.crontask.exceptions.CronTaskNotFoundException;
+import org.carlspring.strongbox.crontask.quartz.GroovyScriptNames;
 import org.carlspring.strongbox.crontask.services.CronTaskConfigurationService;
 import org.carlspring.strongbox.resource.ConfigurationResourceResolver;
 
@@ -93,7 +94,7 @@ public class CronTaskConfigurationRestlet
             }
         }
         catch (ClassNotFoundException | SchedulerException | CronTaskNotFoundException |
-               InstantiationException | IllegalAccessException ex)
+                       InstantiationException | IllegalAccessException ex)
         {
             return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
         }
@@ -184,13 +185,9 @@ public class CronTaskConfigurationRestlet
                 MediaType.APPLICATION_XML })
     public Response getGroovyScriptsName()
     {
-        List<String> list = cronTaskConfigurationService.getGroovyScriptsName();
+        GroovyScriptNames groovyScriptNames = cronTaskConfigurationService.getGroovyScriptsName();
 
-        GenericEntity<List<String>> genericEntity = new GenericEntity<List<String>>(list)
-        {
-        };
-
-        return Response.ok(genericEntity).build();
+        return Response.ok(groovyScriptNames).build();
     }
 
     private void storeGroovyCronTask(InputStream is,
