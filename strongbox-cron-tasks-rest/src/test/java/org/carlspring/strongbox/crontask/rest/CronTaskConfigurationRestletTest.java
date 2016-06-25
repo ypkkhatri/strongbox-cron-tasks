@@ -1,6 +1,6 @@
 package org.carlspring.strongbox.crontask.rest;
 
-import org.carlspring.strongbox.crontask.configuration.CronTaskConfiguration;
+import org.carlspring.strongbox.crontask.domain.CronTaskConfiguration;
 import org.carlspring.strongbox.crontask.configuration.CronTasksConfig;
 import org.carlspring.strongbox.crontask.exceptions.CronTaskNotFoundException;
 import org.carlspring.strongbox.crontask.test.MyTask;

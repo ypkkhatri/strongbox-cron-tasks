@@ -1,13 +1,13 @@
 package org.carlspring.strongbox.crontask.services;
 
 import org.carlspring.strongbox.crontask.api.jobs.AbstractCronJob;
-import org.carlspring.strongbox.crontask.configuration.CronTaskConfiguration;
-import org.carlspring.strongbox.crontask.configuration.CronTaskConfigurationRepository;
+import org.carlspring.strongbox.crontask.domain.CronTaskConfiguration;
 import org.carlspring.strongbox.crontask.exceptions.CronTaskException;
 import org.carlspring.strongbox.crontask.exceptions.CronTaskNotFoundException;
 import org.carlspring.strongbox.crontask.quartz.CronJobSchedulerService;
 import org.carlspring.strongbox.crontask.quartz.GroovyScriptNames;
 
+import org.apache.commons.collections.IteratorUtils;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CronTaskConfigurationService
@@ -23,7 +24,7 @@ public class CronTaskConfigurationService
     private final Logger logger = LoggerFactory.getLogger(CronTaskConfigurationService.class);
 
     @Autowired
-    private CronTaskConfigurationRepository cronTaskConfigurationRepository;
+    private CronTaskDataService cronTaskDataService;
 
     @Autowired
     private CronJobSchedulerService cronJobSchedulerService;
@@ -42,7 +43,7 @@ public class CronTaskConfigurationService
             throw new CronTaskException("cronExpression property does not exists");
         }
 
-        cronTaskConfigurationRepository.saveConfiguration(cronTaskConfiguration);
+        cronTaskDataService.save(cronTaskConfiguration);
 
         if (cronTaskConfiguration.contain("jobClass"))
         {
@@ -67,7 +68,7 @@ public class CronTaskConfigurationService
     {
         logger.debug("CronTaskConfigurationService.deleteConfiguration()");
 
-        cronTaskConfigurationRepository.deleteConfiguration(cronTaskConfiguration);
+        cronTaskDataService.delete(cronTaskConfiguration);
         cronJobSchedulerService.deleteJob(cronTaskConfiguration);
     }
 
@@ -75,14 +76,17 @@ public class CronTaskConfigurationService
     {
         logger.debug("CronTaskConfigurationService.getConfiguration()");
 
-        return cronTaskConfigurationRepository.getConfiguration(name);
+        Optional<CronTaskConfiguration> optional = cronTaskDataService.findByName(name);
+        return optional.isPresent() ? optional.get() : null;
     }
 
     public List<CronTaskConfiguration> getConfigurations()
     {
         logger.debug("CronTaskConfigurationService.getConfigurations()");
 
-        return cronTaskConfigurationRepository.getConfigurations();
+        Optional<List<CronTaskConfiguration>> optional = cronTaskDataService.findAll();
+
+        return (List<CronTaskConfiguration>) (optional.isPresent() ? optional.get() : IteratorUtils.toList(optional.get().iterator()));
     }
 
     public GroovyScriptNames getGroovyScriptsName()

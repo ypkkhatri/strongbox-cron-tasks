@@ -1,7 +1,7 @@
 package org.carlspring.strongbox.crontask.rest;
 
 import org.carlspring.strongbox.crontask.api.jobs.GroovyCronJob;
-import org.carlspring.strongbox.crontask.configuration.CronTaskConfiguration;
+import org.carlspring.strongbox.crontask.domain.CronTaskConfiguration;
 import org.carlspring.strongbox.crontask.exceptions.CronTaskException;
 import org.carlspring.strongbox.crontask.exceptions.CronTaskNotFoundException;
 import org.carlspring.strongbox.crontask.quartz.GroovyScriptNames;
