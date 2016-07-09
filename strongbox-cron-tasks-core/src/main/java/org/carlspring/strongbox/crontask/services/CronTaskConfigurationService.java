@@ -84,7 +84,7 @@ public class CronTaskConfigurationService
     {
         logger.debug("CronTaskConfigurationService.getConfigurations()");
 
-        Optional<List<CronTaskConfiguration>> optional = cronTaskDataService.findAll();
+        Optional<Iterable<CronTaskConfiguration>> optional = cronTaskDataService.findAll();
 
         return (List<CronTaskConfiguration>) (optional.isPresent() ? optional.get() : IteratorUtils.toList(optional.get().iterator()));
     }

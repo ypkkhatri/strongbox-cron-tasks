@@ -71,13 +71,13 @@ public class CronTaskDataServiceImpl
     }
 
     @Override
-    public Optional<List<CronTaskConfiguration>> findAll()
+    public Optional<Iterable<CronTaskConfiguration>> findAll()
     {
         return Optional.ofNullable(repository.findAll());
     }
 
     @Override
-    public Optional<List<CronTaskConfiguration>> findAll(List<String> var1)
+    public Optional<Iterable<CronTaskConfiguration>> findAll(Iterable<String> var1)
     {
         return Optional.ofNullable(repository.findAll(var1));
     }
