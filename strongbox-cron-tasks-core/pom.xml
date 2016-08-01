@@ -82,13 +82,18 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.carlspring.strongbox</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>strongbox-commons</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.carlspring.strongbox</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>strongbox-data-service</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>strongbox-web-core</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -103,6 +108,11 @@
                     <artifactId>log4j</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
         </dependency>
 
         <dependency>

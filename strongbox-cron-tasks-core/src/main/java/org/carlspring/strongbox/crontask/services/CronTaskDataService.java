@@ -15,6 +15,5 @@ public interface CronTaskDataService
         extends CrudService<CronTaskConfiguration, String>
 {
 
-    @Transactional
     Optional<CronTaskConfiguration> findByName(final String name);
 }
