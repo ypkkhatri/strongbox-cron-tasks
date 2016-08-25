@@ -91,11 +91,6 @@
             <artifactId>strongbox-data-service</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>strongbox-web-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.carlspring.maven</groupId>
@@ -187,4 +182,3 @@
     </dependencies>
 
 </project>
-

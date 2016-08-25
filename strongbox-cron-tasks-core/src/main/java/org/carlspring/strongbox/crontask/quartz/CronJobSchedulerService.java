@@ -53,7 +53,7 @@ public class CronJobSchedulerService
             CronTask cronTask = new CronTask();
 
             JobDataMap jobDataMap = new JobDataMap();
-            jobDataMap.put("configuration", cronTaskConfiguration);
+            jobDataMap.put("config", cronTaskConfiguration);
             jobDataMap.put("schedulerFactoryBean", schedulerFactoryBean);
             jobDataMap.put("cronTask", cronTask);
 

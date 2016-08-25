@@ -1,8 +1,10 @@
-package org.carlspring.strongbox.crontask.configuration;
+package org.carlspring.strongbox.config;
+
+import org.carlspring.strongbox.crontask.domain.CronTaskConfiguration;
+
+import javax.annotation.PostConstruct;
 
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
-import org.carlspring.strongbox.config.WebConfig;
-import org.carlspring.strongbox.crontask.domain.CronTaskConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -12,17 +14,20 @@ import org.springframework.data.orient.commons.repository.config.EnableOrientRep
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
-
 @Configuration
-@ComponentScan({ "org.carlspring.strongbox.crontask" })
+@ComponentScan({ "org.carlspring.strongbox.config",
+                 "org.carlspring.strongbox.crontask",
+                 "org.carlspring.strongbox.services"
+               })
 @EnableOrientRepositories(basePackages = "org.carlspring.strongbox.crontask.repository")
-@Import(WebConfig.class)
+@Import({ DataServiceConfig.class
+        })
 public class CronTasksConfig
 {
 
     @Autowired
     private OObjectDatabaseTx databaseTx;
+
 
     @Bean
     public SchedulerFactoryBean schedulerFactoryBean()
@@ -43,4 +48,5 @@ public class CronTasksConfig
         // register all domain entities
         getDatabaseTx().getEntityManager().registerEntityClasses(CronTaskConfiguration.class.getPackage().getName());
     }
+
 }

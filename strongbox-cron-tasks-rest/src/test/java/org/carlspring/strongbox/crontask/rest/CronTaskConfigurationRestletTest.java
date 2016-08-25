@@ -1,7 +1,7 @@
 package org.carlspring.strongbox.crontask.rest;
 
 import org.carlspring.strongbox.crontask.domain.CronTaskConfiguration;
-import org.carlspring.strongbox.crontask.configuration.CronTasksConfig;
+import org.carlspring.strongbox.config.CronTasksConfig;
 import org.carlspring.strongbox.crontask.exceptions.CronTaskNotFoundException;
 import org.carlspring.strongbox.crontask.test.MyTask;
 
@@ -89,7 +89,7 @@ public class CronTaskConfigurationRestletTest
     {
         logger.debug("Cron Expression: " + cronExpression);
 
-        String url = client.getContextBaseUrl() + "/configuration/crontasks/crontask";
+        String url = client.getContextBaseUrl() + "/config/crontasks/crontask";
 
         CronTaskConfiguration configuration = new CronTaskConfiguration();
         configuration.setName(cronName);
@@ -110,10 +110,10 @@ public class CronTaskConfigurationRestletTest
         assertEquals("Failed to schedule job!", Response.ok().build().getStatus(), status);
 
         /**
-         * Retrieve saved configuration
+         * Retrieve saved config
          * */
         url = client.getContextBaseUrl() +
-              "/configuration/crontasks/crontask?" +
+              "/config/crontasks/crontask?" +
               "name=" + cronName;
         resource = client.getClientInstance().target(url);
 
@@ -129,7 +129,7 @@ public class CronTaskConfigurationRestletTest
     {
         logger.debug("Cron Expression: " + cronExpression);
 
-        String url = client.getContextBaseUrl() + "/configuration/crontasks/crontask";
+        String url = client.getContextBaseUrl() + "/config/crontasks/crontask";
 
         CronTaskConfiguration configuration = new CronTaskConfiguration();
         configuration.setName(cronName);
@@ -149,9 +149,9 @@ public class CronTaskConfigurationRestletTest
         assertEquals("Failed to schedule job!", Response.ok().build().getStatus(), status);
 
         /**
-         * Retrieve saved configuration
+         * Retrieve saved config
          * */
-        url = client.getContextBaseUrl() + "/configuration/crontasks/crontask?name=" + cronName;
+        url = client.getContextBaseUrl() + "/config/crontasks/crontask?name=" + cronName;
 
         resource = client.getClientInstance().target(url);
 
@@ -165,16 +165,16 @@ public class CronTaskConfigurationRestletTest
 
     public void deleteConfig()
     {
-        String path = "/configuration/crontasks/crontask?name=" + cronName;
+        String path = "/config/crontasks/crontask?name=" + cronName;
 
         Response response = client.delete(path);
         assertEquals("Failed to delete job!", Response.ok().build().getStatus(), response.getStatus());
 
         /**
-         * Retrieve deleted configuration
+         * Retrieve deleted config
          * */
         String url = client.getContextBaseUrl() +
-                     "/configuration/crontasks/crontask?" +
+                     "/config/crontasks/crontask?" +
                      "name=" + cronName;
         WebTarget resource = client.getClientInstance().target(url);
 
@@ -194,7 +194,7 @@ public class CronTaskConfigurationRestletTest
 
         File file = new File("target/test-classes/groovy/" + fileName);
 
-        String path = client.getContextBaseUrl() + "/configuration/crontasks/crontask/groovy?cronName=" + cronName;
+        String path = client.getContextBaseUrl() + "/config/crontasks/crontask/groovy?cronName=" + cronName;
 
         Response response = null;
         try
@@ -223,7 +223,7 @@ public class CronTaskConfigurationRestletTest
          * Retrieve list of Groovy scripts file name
          * */
         String url = client.getContextBaseUrl() +
-                     "/configuration/crontasks/groovy/names";
+                     "/config/crontasks/groovy/names";
         WebTarget resource = client.getClientInstance().target(url);
 
         Response response = resource.request(MediaType.APPLICATION_JSON).get();

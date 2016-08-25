@@ -35,7 +35,7 @@ public class TestClient
                        Integer.parseInt(System.getProperty("strongbox.port")) :
                        48080;
 
-    private String contextBaseUrl = "/configuration/crontasks";
+    private String contextBaseUrl = "/config/crontasks";
 
     private Client client;
 
