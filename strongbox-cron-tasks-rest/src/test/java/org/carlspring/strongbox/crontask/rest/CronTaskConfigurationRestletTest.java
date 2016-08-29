@@ -14,6 +14,7 @@ import java.io.*;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.quartz.SchedulerException;
@@ -35,15 +36,15 @@ public class CronTaskConfigurationRestletTest
 
     protected TestClient client;
 
-    private final String cronName = "CRJ001";
+    private final String cronName1 = "CRJ001";
+    private final String cronName2 = "CRJG001";
 
 
     @Before
     public void setUp()
             throws Exception
     {
-        client = TestClient.getTestInstance();
-        ;
+        client = TestClient.getTestInstanceLoggedInAsAdmin();
     }
 
     @After
@@ -66,7 +67,7 @@ public class CronTaskConfigurationRestletTest
     {
         saveJavaConfig("0 0/1 * 1/1 * ? *");
 //        saveJavaConfig("0 0/2 * 1/1 * ? *"); // Remove comments to test cron job execution
-        deleteConfig();
+        deleteConfig(cronName1);
     }
 
     @Test
@@ -81,7 +82,7 @@ public class CronTaskConfigurationRestletTest
         uploadGroovyScript();
 //        listOfGroovyScriptsName();
 //        saveGroovyConfig("0 0/2 * 1/1 * ? *"); // Remove comments to test cron job execution
-        deleteConfig();
+        deleteConfig(cronName2);
     }
 
     public void saveJavaConfig(String cronExpression)
@@ -92,11 +93,12 @@ public class CronTaskConfigurationRestletTest
         String url = client.getContextBaseUrl() + "/config/crontasks/crontask";
 
         CronTaskConfiguration configuration = new CronTaskConfiguration();
-        configuration.setName(cronName);
+        configuration.setName(cronName1);
         configuration.addProperty("cronExpression", cronExpression);
         configuration.addProperty("jobClass", MyTask.class.getName());
 
         WebTarget resource = client.getClientInstance().target(url);
+        client.setupAuthentication(resource);
 
         Response response = resource.request(MediaType.APPLICATION_JSON)
                                     .put(Entity.entity(configuration, MediaType.APPLICATION_JSON));
@@ -114,8 +116,9 @@ public class CronTaskConfigurationRestletTest
          * */
         url = client.getContextBaseUrl() +
               "/config/crontasks/crontask?" +
-              "name=" + cronName;
+              "name=" + cronName1;
         resource = client.getClientInstance().target(url);
+        client.setupAuthentication(resource);
 
         response = resource.request(MediaType.APPLICATION_JSON).get();
 
@@ -132,10 +135,11 @@ public class CronTaskConfigurationRestletTest
         String url = client.getContextBaseUrl() + "/config/crontasks/crontask";
 
         CronTaskConfiguration configuration = new CronTaskConfiguration();
-        configuration.setName(cronName);
+        configuration.setName(cronName2);
         configuration.addProperty("cronExpression", cronExpression);
 
         WebTarget resource = client.getClientInstance().target(url);
+        client.setupAuthentication(resource);
 
         Response response = resource.request(MediaType.APPLICATION_JSON)
                                     .put(Entity.entity(configuration, MediaType.APPLICATION_JSON));
@@ -151,9 +155,10 @@ public class CronTaskConfigurationRestletTest
         /**
          * Retrieve saved config
          * */
-        url = client.getContextBaseUrl() + "/config/crontasks/crontask?name=" + cronName;
+        url = client.getContextBaseUrl() + "/config/crontasks/crontask?name=" + cronName2;
 
         resource = client.getClientInstance().target(url);
+        client.setupAuthentication(resource);
 
         response = resource.request(MediaType.APPLICATION_JSON).get();
 
@@ -163,7 +168,7 @@ public class CronTaskConfigurationRestletTest
 
     }
 
-    public void deleteConfig()
+    public void deleteConfig(String cronName)
     {
         String path = "/config/crontasks/crontask?name=" + cronName;
 
@@ -177,6 +182,7 @@ public class CronTaskConfigurationRestletTest
                      "/config/crontasks/crontask?" +
                      "name=" + cronName;
         WebTarget resource = client.getClientInstance().target(url);
+        client.setupAuthentication(resource);
 
         response = resource.request(MediaType.APPLICATION_JSON).get();
 
@@ -194,13 +200,14 @@ public class CronTaskConfigurationRestletTest
 
         File file = new File("target/test-classes/groovy/" + fileName);
 
-        String path = client.getContextBaseUrl() + "/config/crontasks/crontask/groovy?cronName=" + cronName;
+        String path = client.getContextBaseUrl() + "/config/crontasks/crontask/groovy?cronName=" + cronName2;
 
         Response response = null;
         try
         {
             InputStream is = new FileInputStream(file);
             WebTarget resource = client.getClientInstance().target(path);
+            client.setupAuthentication(resource);
             response = resource.request(MediaType.APPLICATION_OCTET_STREAM)
                                .header("Content-Disposition", contentDisposition)
                                .header("fileName", fileName)
@@ -225,6 +232,7 @@ public class CronTaskConfigurationRestletTest
         String url = client.getContextBaseUrl() +
                      "/config/crontasks/groovy/names";
         WebTarget resource = client.getClientInstance().target(url);
+        client.setupAuthentication(resource);
 
         Response response = resource.request(MediaType.APPLICATION_JSON).get();
 

@@ -158,7 +158,8 @@ public class CronTaskConfigurationRestlet
                            .entity("Configuration not found by this name!")
                            .build();
         }
-
+        logger.info(">> CRON NAME: " + cronTaskConfiguration.getName());
+        logger.info(">> Properties: " + cronTaskConfiguration.getProperties());
         String path = ConfigurationResourceResolver.getVaultDirectory() + "/etc/conf/cron/groovy";
 
         cronTaskConfiguration.addProperty("fileName", fileName);

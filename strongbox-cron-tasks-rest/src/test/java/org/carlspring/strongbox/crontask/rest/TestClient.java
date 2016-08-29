@@ -1,5 +1,6 @@
 package org.carlspring.strongbox.crontask.rest;
 
+import javax.ws.rs.ServerErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Invocation;
@@ -12,6 +13,7 @@ import java.io.InputStream;
 
 import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +26,9 @@ public class TestClient
 {
 
     private static final Logger logger = LoggerFactory.getLogger(TestClient.class);
-    
+
+    protected String username = "maven";
+    protected String password = "password";
     private String protocol = "http";
 
     private String host = System.getProperty("strongbox.host") != null ?
@@ -44,7 +48,13 @@ public class TestClient
     {
     }
 
-    public static TestClient getTestInstance()
+    public static TestClient getTestInstanceLoggedInAsAdmin()
+    {
+        return getTestInstance("admin", "password");
+    }
+
+    public static TestClient getTestInstance(String username,
+                                             String password)
     {
         String host = System.getProperty("strongbox.host") != null ?
                       System.getProperty("strongbox.host") :
@@ -56,6 +66,8 @@ public class TestClient
 
         TestClient client = new TestClient();
         client.setPort(port);
+        client.setUsername(username);
+        client.setPassword(password);
         client.setContextBaseUrl("http://" + host + ":" + client.getPort());
 
         return client;
@@ -107,6 +119,7 @@ public class TestClient
         logger.debug("Getting " + url + "...");
 
         WebTarget resource = getClientInstance().target(url);
+        setupAuthentication(resource);
 
         Invocation.Builder request = resource.request();
         Response response;
@@ -131,6 +144,7 @@ public class TestClient
         logger.debug("Getting " + url + "...");
 
         WebTarget resource = getClientInstance().target(url);
+        setupAuthentication(resource);
 
         return resource.request(MediaType.TEXT_PLAIN).get();
     }
@@ -141,6 +155,7 @@ public class TestClient
         String url = getContextBaseUrl() + (path.endsWith("/") ? "" : "/") + path;
 
         WebTarget resource = getClientInstance().target(url);
+        setupAuthentication(resource);
 
         Response response = resource.request().delete();
 
@@ -156,6 +171,7 @@ public class TestClient
         logger.debug("Path to artifact: " + url);
 
         WebTarget resource = getClientInstance().target(url);
+        setupAuthentication(resource);
 
         Response response = resource.request(MediaType.TEXT_PLAIN).get();
 
@@ -174,6 +190,19 @@ public class TestClient
                 logger.error(message);
                 logger.error((String) entity);
             }
+        }
+    }
+
+    public void setupAuthentication(WebTarget target)
+    {
+        if (username != null && password != null)
+        {
+            logger.trace("[setupAuthentication] " + username + "@" + password);
+            target.register(HttpAuthenticationFeature.basic(username, password));
+        }
+        else
+        {
+            throw new ServerErrorException("Unable to setup authentication", Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -205,6 +234,26 @@ public class TestClient
     public void setPort(int port)
     {
         this.port = port;
+    }
+
+    public void setUsername(String username)
+    {
+        this.username = username;
+    }
+
+    public String getUsername()
+    {
+        return username;
+    }
+
+    public void setPassword(String password)
+    {
+        this.password = password;
+    }
+
+    public String getPassword()
+    {
+        return password;
     }
 
     public String getContextBaseUrl()
