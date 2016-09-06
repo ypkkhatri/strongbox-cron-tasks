@@ -15,13 +15,6 @@ public class CronTaskConfiguration
         extends GenericEntity
 {
 
-//    /**
-//     * RID: #<cluster-id>:<cluster-position>
-//     */
-//    @Id
-//    @XmlTransient
-//    private String id;
-
     @XmlElement(name = "name")
     private String name;
 
