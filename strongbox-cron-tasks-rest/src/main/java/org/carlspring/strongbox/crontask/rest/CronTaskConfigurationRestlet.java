@@ -1,7 +1,7 @@
 package org.carlspring.strongbox.crontask.rest;
 
 import org.carlspring.strongbox.crontask.api.jobs.GroovyCronJob;
-import org.carlspring.strongbox.crontask.configuration.CronTaskConfiguration;
+import org.carlspring.strongbox.crontask.domain.CronTaskConfiguration;
 import org.carlspring.strongbox.crontask.exceptions.CronTaskException;
 import org.carlspring.strongbox.crontask.exceptions.CronTaskNotFoundException;
 import org.carlspring.strongbox.crontask.quartz.GroovyScriptNames;
@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
-@Path("/configuration/crontasks")
+@Path("/config/crontasks")
 public class CronTaskConfigurationRestlet
 {
 
@@ -158,7 +158,8 @@ public class CronTaskConfigurationRestlet
                            .entity("Configuration not found by this name!")
                            .build();
         }
-
+        logger.info(">> CRON NAME: " + cronTaskConfiguration.getName());
+        logger.info(">> Properties: " + cronTaskConfiguration.getProperties());
         String path = ConfigurationResourceResolver.getVaultDirectory() + "/etc/conf/cron/groovy";
 
         cronTaskConfiguration.addProperty("fileName", fileName);

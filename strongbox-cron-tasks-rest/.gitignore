@@ -1,0 +1,2 @@
+*.log
+ehcache.disk.store.dir/

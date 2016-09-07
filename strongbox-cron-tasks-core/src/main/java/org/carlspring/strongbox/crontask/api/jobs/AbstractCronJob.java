@@ -1,6 +1,6 @@
 package org.carlspring.strongbox.crontask.api.jobs;
 
-import org.carlspring.strongbox.crontask.configuration.CronTaskConfiguration;
+import org.carlspring.strongbox.crontask.domain.CronTaskConfiguration;
 import org.carlspring.strongbox.crontask.quartz.CronTask;
 
 import org.quartz.InterruptableJob;

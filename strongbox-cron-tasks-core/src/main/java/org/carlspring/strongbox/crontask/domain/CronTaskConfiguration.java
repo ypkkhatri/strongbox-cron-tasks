@@ -1,6 +1,7 @@
-package org.carlspring.strongbox.crontask.configuration;
+package org.carlspring.strongbox.crontask.domain;
 
-import javax.persistence.Id;
+import org.carlspring.strongbox.data.domain.GenericEntity;
+
 import javax.xml.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,14 +12,8 @@ import java.util.Map;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CronTaskConfiguration
+        extends GenericEntity
 {
-
-    /**
-     * RID: #<cluster-id>:<cluster-position>
-     */
-    @Id
-    @XmlTransient
-    private Object id;
 
     @XmlElement(name = "name")
     private String name;
@@ -31,12 +26,12 @@ public class CronTaskConfiguration
     {
     }
 
-    public Object getId()
+    public String getId()
     {
         return id;
     }
 
-    public void setId(Object id)
+    public void setId(String id)
     {
         this.id = id;
     }

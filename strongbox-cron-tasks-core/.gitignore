@@ -1,0 +1,7 @@
+db/
+etc/
+storages/
+*.lock
+META-INF/spring
+ehcache.disk.store.dir/
+target/
