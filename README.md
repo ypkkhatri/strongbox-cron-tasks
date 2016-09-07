@@ -1,9 +1,5 @@
 This is the Strongbox cron tasks project.
 
-[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/strongbox/strongbox-cron-tasks?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-[![Build Status](https://dev.carlspring.org/jenkins/buildStatus/icon?job=strongbox/strongbox-cron-tasks)](https://dev.carlspring.org/jenkins/job/strongbox/strongbox-cron-tasks)
-
 # Strongbox Cron Tasks
 An API for configuring Java/Groovy cron tasks on RESTful services
 
@@ -37,20 +33,21 @@ public class MyTask
     }
 }
 ```
+
 ### Groovy Cron Task
-bla bla bla
 
-## Built With
+TODO: Documentation pending
 
-* Maven
+# Build Status
 
-## Authors
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/strongbox/strongbox-cron-tasks?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-* **Yougeshwar Khatri** - *Initial work* - [ypkkhatri](https://github.com/ypkkhatri)
-* **Martin Todorov** - [carlspring](https://github.com/carlspring)
+[![Build Status](https://dev.carlspring.org/jenkins/buildStatus/icon?job=strongbox/strongbox-cron-tasks)](https://dev.carlspring.org/jenkins/job/strongbox/strongbox-cron-tasks)
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+# Contributing
 
-## License
+Contributors are always welcome! For more details, please check [here](https://github.com/strongbox/strongbox/blob/master/CONTRIBUTING.md).
 
-This project is licensed under the Apache License - see the [LICENSE.md](LICENSE.md) file for details
+# License
+
+This project is licensed under an Apache 2.0 License - see the [LICENSE.md](LICENSE.md) file for details
