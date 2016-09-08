@@ -6,13 +6,12 @@ import org.carlspring.strongbox.crontask.exceptions.CronTaskException;
 import org.carlspring.strongbox.crontask.exceptions.CronTaskNotFoundException;
 import org.carlspring.strongbox.crontask.services.CronTaskConfigurationService;
 
-import org.carlspring.strongbox.crontask.test.MyTask;
+import org.carlspring.strongbox.crontask.tasks.MyTask;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -26,14 +25,6 @@ import static org.junit.Assert.assertNull;
 @TestExecutionListeners(listeners = { DependencyInjectionTestExecutionListener.class })
 public class CronTaskConfigurationServiceTest
 {
-
-/*
-    @org.springframework.context.annotation.Configuration
-    @Import({
-                    CronTasksConfig.class
-            })
-    public static class SpringConfig { }
-*/
 
     @Autowired
     private CronTaskConfigurationService cronTaskConfigurationService;

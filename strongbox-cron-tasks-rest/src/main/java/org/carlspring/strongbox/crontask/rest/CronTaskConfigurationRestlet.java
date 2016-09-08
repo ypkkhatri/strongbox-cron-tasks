@@ -1,5 +1,9 @@
 package org.carlspring.strongbox.crontask.rest;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.carlspring.strongbox.crontask.api.jobs.GroovyCronJob;
 import org.carlspring.strongbox.crontask.domain.CronTaskConfiguration;
 import org.carlspring.strongbox.crontask.exceptions.CronTaskException;
@@ -27,7 +31,8 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
-@Path("/config/crontasks")
+@Path("/configuration/crontasks")
+@Api(value = "/configuration/crontasks")
 public class CronTaskConfigurationRestlet
 {
 
@@ -40,6 +45,9 @@ public class CronTaskConfigurationRestlet
     @Path("/crontask")
     @Consumes({ MediaType.APPLICATION_JSON,
                 MediaType.APPLICATION_XML })
+    @ApiOperation(value = "Used to save the configuration", position = 0)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "The configuration was saved successfully."),
+                            @ApiResponse(code = 400, message = "An error occurred.") })
     public Response saveConfiguration(CronTaskConfiguration cronTaskConfiguration)
     {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -62,6 +70,9 @@ public class CronTaskConfigurationRestlet
 
     @DELETE
     @Path("/crontask")
+    @ApiOperation(value = "Used to delete the configuration", position = 1)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "The configuration was deleted successfully."),
+                            @ApiResponse(code = 400, message = "An error occurred.") })
     public Response deleteConfiguration(@QueryParam("name") String name)
     {
         CronTaskConfiguration config = cronTaskConfigurationService.getConfiguration(name);
@@ -106,6 +117,9 @@ public class CronTaskConfigurationRestlet
     @Path("/crontask")
     @Produces({ MediaType.APPLICATION_JSON,
                 MediaType.APPLICATION_XML })
+    @ApiOperation(value = "Used to get the configuration on given cron task name", position = 2)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "The configuration retrieved successfully."),
+                            @ApiResponse(code = 400, message = "An error occurred.") })
     public Response getConfiguration(@QueryParam("name") String name)
     {
         CronTaskConfiguration config = cronTaskConfigurationService.getConfiguration(name);
@@ -123,6 +137,9 @@ public class CronTaskConfigurationRestlet
     @Path("/")
     @Produces({ MediaType.APPLICATION_JSON,
                 MediaType.APPLICATION_XML })
+    @ApiOperation(value = "Used to get list of all the configurations", position = 3)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "The all configurations retrieved successfully."),
+                            @ApiResponse(code = 400, message = "An error occurred.") })
     public Response getConfigurations()
     {
         List<CronTaskConfiguration> configList = cronTaskConfigurationService.getConfigurations();
@@ -138,6 +155,9 @@ public class CronTaskConfigurationRestlet
 
     @PUT
     @Path("/crontask/groovy")
+    @ApiOperation(value = "Used to upload groovy script for groovy cron task", position = 4)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "The groovy script uploaded successfully."),
+                            @ApiResponse(code = 400, message = "An error occurred.") })
     public Response uploadGroovyScript(@QueryParam("cronName") String cronName,
                                        @Context HttpHeaders headers,
                                        @Context HttpServletRequest request,
@@ -184,6 +204,9 @@ public class CronTaskConfigurationRestlet
     @Path("/groovy/names")
     @Produces({ MediaType.APPLICATION_JSON,
                 MediaType.APPLICATION_XML })
+    @ApiOperation(value = "Used to get all groovy scripts names", position = 5)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "The groovy scripts named retrieved successfully."),
+                            @ApiResponse(code = 400, message = "An error occurred.") })
     public Response getGroovyScriptsName()
     {
         GroovyScriptNames groovyScriptNames = cronTaskConfigurationService.getGroovyScriptsName();

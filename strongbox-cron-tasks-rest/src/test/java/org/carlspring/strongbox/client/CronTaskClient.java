@@ -1,4 +1,4 @@
-package org.carlspring.strongbox.crontask.rest;
+package org.carlspring.strongbox.client;
 
 import javax.ws.rs.ServerErrorException;
 import javax.ws.rs.client.Client;
@@ -21,11 +21,11 @@ import org.slf4j.LoggerFactory;
  * @author mtodorov
  * @author Yougeshwar
  */
-public class TestClient
+public class CronTaskClient
         implements Closeable
 {
 
-    private static final Logger logger = LoggerFactory.getLogger(TestClient.class);
+    private static final Logger logger = LoggerFactory.getLogger(CronTaskClient.class);
 
     protected String username = "maven";
     protected String password = "password";
@@ -39,22 +39,22 @@ public class TestClient
                        Integer.parseInt(System.getProperty("strongbox.port")) :
                        48080;
 
-    private String contextBaseUrl = "/config/crontasks";
+    private String contextBaseUrl = "/configuration/crontasks";
 
     private Client client;
 
 
-    public TestClient()
+    public CronTaskClient()
     {
     }
 
-    public static TestClient getTestInstanceLoggedInAsAdmin()
+    public static CronTaskClient getTestInstanceLoggedInAsAdmin()
     {
         return getTestInstance("admin", "password");
     }
 
-    public static TestClient getTestInstance(String username,
-                                             String password)
+    public static CronTaskClient getTestInstance(String username,
+                                                 String password)
     {
         String host = System.getProperty("strongbox.host") != null ?
                       System.getProperty("strongbox.host") :
@@ -64,11 +64,11 @@ public class TestClient
                    Integer.parseInt(System.getProperty("strongbox.port")) :
                    48080;
 
-        TestClient client = new TestClient();
+        CronTaskClient client = new CronTaskClient();
         client.setPort(port);
         client.setUsername(username);
         client.setPassword(password);
-        client.setContextBaseUrl("http://" + host + ":" + client.getPort());
+        client.setContextBaseUrl("http://" + host + ":" + client.getPort() + "/configuration/crontasks");
 
         return client;
     }
@@ -152,7 +152,7 @@ public class TestClient
     public Response delete(String path)
     {
         @SuppressWarnings("ConstantConditions")
-        String url = getContextBaseUrl() + (path.endsWith("/") ? "" : "/") + path;
+        String url = getContextBaseUrl() + path;
 
         WebTarget resource = getClientInstance().target(url);
         setupAuthentication(resource);
