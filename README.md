@@ -36,7 +36,7 @@ public class MyTask
 
 ### Groovy Cron Task
 
-TODO: Documentation pending
+To create a groovy based cron task you need to save cron configuration without any job class, after that upload the groovy scripts with cron name that will auto start cron on that scripts 
 
 # Build Status
 
