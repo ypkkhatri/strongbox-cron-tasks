@@ -16,7 +16,7 @@ This guidelines will let you know how to integrate your own custom cron task usi
 * GET    - http://example.com/config/crontasks/groovy/names (To get list of all configured groovy scripts names)
 
 ### Java Cron Task
-To create a java based cron task you need to extend a class org.carlspring.strongbox.crontask.api.jobs.JavaCronJob and implements an abstract method executeInternal()
+To create a java based cron task you need to extend a class org.carlspring.strongbox.cron.api.jobs.JavaCronJob and implements an abstract method executeInternal()
 
 ```
 public class MyTask

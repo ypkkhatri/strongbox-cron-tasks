@@ -1,6 +1,6 @@
 package org.carlspring.strongbox.config;
 
-import org.carlspring.strongbox.crontask.domain.CronTaskConfiguration;
+import org.carlspring.strongbox.cron.domain.CronTaskConfiguration;
 
 import javax.annotation.PostConstruct;
 
@@ -16,10 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Configuration
 @ComponentScan({ "org.carlspring.strongbox.config",
-                 "org.carlspring.strongbox.crontask",
+                 "org.carlspring.strongbox.cron",
                  "org.carlspring.strongbox.services"
                })
-@EnableOrientRepositories(basePackages = "org.carlspring.strongbox.crontask.repository")
+@EnableOrientRepositories(basePackages = "org.carlspring.strongbox.cron.repository")
 @Import({ DataServiceConfig.class
         })
 public class CronTasksConfig
