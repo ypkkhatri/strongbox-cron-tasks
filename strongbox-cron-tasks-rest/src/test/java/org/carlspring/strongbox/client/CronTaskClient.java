@@ -100,18 +100,4 @@ public class CronTaskClient extends ArtifactClient
         return resource.request().delete();
     }
 
-    private void handleFailures(Response response, String message)
-    {
-        int status = response.getStatus();
-        if (status != 200)
-        {
-            Object entity = response.getEntity();
-
-            if (entity != null && entity instanceof String)
-            {
-                logger.error(message);
-                logger.error((String) entity);
-            }
-        }
-    }
 }
