@@ -43,7 +43,7 @@ public class CronTaskClient extends ArtifactClient
         return client;
     }
 
-    public Response saveConfig(CronTaskConfiguration configuration)
+    public Response saveCronConfig(CronTaskConfiguration configuration)
             throws UnsupportedEncodingException, JAXBException
     {
         String url = getContextBaseUrl() + "/cron";
@@ -54,7 +54,7 @@ public class CronTaskClient extends ArtifactClient
                        .put(Entity.entity(configuration, MediaType.APPLICATION_JSON));
     }
 
-    public Response getConfig(String cronName)
+    public Response getCronConfig(String cronName)
     {
         String url = getContextBaseUrl() +
                      "/cron?" +
@@ -66,7 +66,7 @@ public class CronTaskClient extends ArtifactClient
         return resource.request(MediaType.APPLICATION_JSON).get();
     }
 
-    public Response uploadScript(String cronName, String fileName, InputStream is)
+    public Response uploadCronScript(String cronName, String fileName, InputStream is)
     {
         String path = getContextBaseUrl() + "/cron/groovy?cronName=" + cronName;
 
@@ -90,7 +90,7 @@ public class CronTaskClient extends ArtifactClient
         return resource.request(MediaType.APPLICATION_JSON).get();
     }
 
-    public Response delete(String cronName)
+    public Response deleteCronConfig(String cronName)
     {
         String url = getContextBaseUrl() + "/cron?name=" + cronName;
 

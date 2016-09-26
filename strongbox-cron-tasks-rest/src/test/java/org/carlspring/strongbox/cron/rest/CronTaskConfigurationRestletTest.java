@@ -6,9 +6,6 @@ import org.carlspring.strongbox.config.CronTasksConfig;
 import org.carlspring.strongbox.cron.exceptions.CronTaskNotFoundException;
 import org.carlspring.strongbox.cron.tasks.MyTask;
 
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBException;
 import java.io.*;
@@ -107,7 +104,7 @@ public class CronTaskConfigurationRestletTest
         configuration.addProperty("cronExpression", cronExpression);
         configuration.addProperty("jobClass", MyTask.class.getName());
 
-        Response response = client.saveConfig(configuration);
+        Response response = client.saveCronConfig(configuration);
 
         int status = response.getStatus();
         if (Response.ok().build().getStatus() != status)
@@ -120,7 +117,7 @@ public class CronTaskConfigurationRestletTest
         /**
          * Retrieve saved config
          * */
-        response = client.getConfig(cronName1);
+        response = client.getCronConfig(cronName1);
 
         status = response.getStatus();
 
@@ -138,7 +135,7 @@ public class CronTaskConfigurationRestletTest
         configuration.setName(cronName2);
         configuration.addProperty("cronExpression", cronExpression);
 
-        Response response = client.saveConfig(configuration);
+        Response response = client.saveCronConfig(configuration);
 
         int status = response.getStatus();
         if (Response.ok().build().getStatus() != status)
@@ -151,7 +148,7 @@ public class CronTaskConfigurationRestletTest
         /**
          * Retrieve saved config
          * */
-        response = client.getConfig(cronName2);
+        response = client.getCronConfig(cronName2);
 
         status = response.getStatus();
 
@@ -161,13 +158,13 @@ public class CronTaskConfigurationRestletTest
 
     public void deleteConfig(String cronName)
     {
-        Response response = client.delete(cronName);
-        assertEquals("Failed to delete job!", Response.ok().build().getStatus(), response.getStatus());
+        Response response = client.deleteCronConfig(cronName);
+        assertEquals("Failed to deleteCronConfig job!", Response.ok().build().getStatus(), response.getStatus());
 
         /**
          * Retrieve deleted config
          * */
-        response = client.getConfig(cronName);
+        response = client.getCronConfig(cronName);
 
         assertEquals("Cron task config exists!",
                      Response.status(Response.Status.BAD_REQUEST).build().getStatus(),
@@ -184,7 +181,7 @@ public class CronTaskConfigurationRestletTest
         try
         {
             InputStream is = new FileInputStream(file);
-            response = client.uploadScript(cronName2, fileName, is);
+            response = client.uploadCronScript(cronName2, fileName, is);
         }
         catch (FileNotFoundException e)
         {
