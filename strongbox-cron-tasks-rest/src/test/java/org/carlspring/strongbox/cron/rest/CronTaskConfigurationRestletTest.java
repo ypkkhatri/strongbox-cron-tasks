@@ -100,18 +100,14 @@ public class CronTaskConfigurationRestletTest
     {
         logger.debug("Cron Expression: " + cronExpression);
 
-        String url = client.getContextBaseUrl() + "/cron";
+        String url = "/cron";
 
         CronTaskConfiguration configuration = new CronTaskConfiguration();
         configuration.setName(cronName1);
         configuration.addProperty("cronExpression", cronExpression);
         configuration.addProperty("jobClass", MyTask.class.getName());
 
-        WebTarget resource = client.getClientInstance().target(url);
-        client.setupAuthentication(resource);
-
-        Response response = resource.request(MediaType.APPLICATION_JSON)
-                                    .put(Entity.entity(configuration, MediaType.APPLICATION_JSON));
+        Response response = client.saveConfig(configuration);
 
         int status = response.getStatus();
         if (Response.ok().build().getStatus() != status)
@@ -124,13 +120,7 @@ public class CronTaskConfigurationRestletTest
         /**
          * Retrieve saved config
          * */
-        url = client.getContextBaseUrl() +
-              "/cron?" +
-              "name=" + cronName1;
-        resource = client.getClientInstance().target(url);
-        client.setupAuthentication(resource);
-
-        response = resource.request(MediaType.APPLICATION_JSON).get();
+        response = client.getConfig(cronName1);
 
         status = response.getStatus();
 
@@ -148,11 +138,7 @@ public class CronTaskConfigurationRestletTest
         configuration.setName(cronName2);
         configuration.addProperty("cronExpression", cronExpression);
 
-        WebTarget resource = client.getClientInstance().target(url);
-        client.setupAuthentication(resource);
-
-        Response response = resource.request(MediaType.APPLICATION_JSON)
-                                    .put(Entity.entity(configuration, MediaType.APPLICATION_JSON));
+        Response response = client.saveConfig(configuration);
 
         int status = response.getStatus();
         if (Response.ok().build().getStatus() != status)
@@ -165,12 +151,7 @@ public class CronTaskConfigurationRestletTest
         /**
          * Retrieve saved config
          * */
-        url = client.getContextBaseUrl() + "/cron?name=" + cronName2;
-
-        resource = client.getClientInstance().target(url);
-        client.setupAuthentication(resource);
-
-        response = resource.request(MediaType.APPLICATION_JSON).get();
+        response = client.getConfig(cronName2);
 
         status = response.getStatus();
 
@@ -180,58 +161,37 @@ public class CronTaskConfigurationRestletTest
 
     public void deleteConfig(String cronName)
     {
-        String path = "/cron?name=" + cronName;
-
-        Response response = client.delete(path);
+        Response response = client.delete(cronName);
         assertEquals("Failed to delete job!", Response.ok().build().getStatus(), response.getStatus());
 
         /**
          * Retrieve deleted config
          * */
-        String url = client.getContextBaseUrl() +
-                     "/cron?" +
-                     "name=" + cronName;
-        WebTarget resource = client.getClientInstance().target(url);
-        client.setupAuthentication(resource);
-
-        response = resource.request(MediaType.APPLICATION_JSON).get();
-
-        int status = response.getStatus();
+        response = client.getConfig(cronName);
 
         assertEquals("Cron task config exists!",
                      Response.status(Response.Status.BAD_REQUEST).build().getStatus(),
-                     status);
+                     response.getStatus());
     }
 
     public void uploadGroovyScript()
     {
         String fileName = "GroovyTask.groovy";
-        String contentDisposition = "attachment; filename=\"" + fileName + "\"";
 
         File file = new File("target/test-classes/groovy/" + fileName);
-
-        String path = client.getContextBaseUrl() + "/cron/groovy?cronName=" + cronName2;
 
         Response response = null;
         try
         {
             InputStream is = new FileInputStream(file);
-            WebTarget resource = client.getClientInstance().target(path);
-            client.setupAuthentication(resource);
-            response = resource.request(MediaType.APPLICATION_OCTET_STREAM)
-                               .header("Content-Disposition", contentDisposition)
-                               .header("fileName", fileName)
-                               .put(Entity.entity(is, MediaType.APPLICATION_OCTET_STREAM));
-
+            response = client.uploadScript(cronName2, fileName, is);
         }
         catch (FileNotFoundException e)
         {
             logger.error("Error: ", e);
         }
 
-        int status = response.getStatus();
-
-        assertEquals("Failed to upload groovy script!", Response.ok().build().getStatus(), status);
+        assertEquals("Failed to upload groovy script!", Response.ok().build().getStatus(), response.getStatus());
     }
 
     public void listOfGroovyScriptsName()
@@ -239,16 +199,8 @@ public class CronTaskConfigurationRestletTest
         /**
          * Retrieve list of Groovy scripts file name
          * */
-        String url = client.getContextBaseUrl() +
-                     "/groovy/names";
-        WebTarget resource = client.getClientInstance().target(url);
-        client.setupAuthentication(resource);
-
-        Response response = resource.request(MediaType.APPLICATION_JSON).get();
-
-        int status = response.getStatus();
-
-        assertEquals("Failed to get groovy scripts names!", Response.ok().build().getStatus(), status);
+        Response response = client.getGroovyScriptsName();
+        assertEquals("Failed to get groovy scripts names!", Response.ok().build().getStatus(), response.getStatus());
     }
 
 }

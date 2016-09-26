@@ -1,11 +1,17 @@
 package org.carlspring.strongbox.client;
 
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
-import java.io.Closeable;
-
+import org.carlspring.strongbox.cron.domain.CronTaskConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.xml.bind.JAXBException;
+import java.io.Closeable;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
 /**
  * @author mtodorov
@@ -37,19 +43,61 @@ public class CronTaskClient extends ArtifactClient
         return client;
     }
 
-    public Response delete(String path)
+    public Response saveConfig(CronTaskConfiguration configuration)
+            throws UnsupportedEncodingException, JAXBException
     {
-        @SuppressWarnings("ConstantConditions")
-        String url = getContextBaseUrl() + path;
+        String url = getContextBaseUrl() + "/cron";
+        WebTarget resource = getClientInstance().target(url);
+        setupAuthentication(resource);
+
+        return resource.request(MediaType.APPLICATION_JSON)
+                       .put(Entity.entity(configuration, MediaType.APPLICATION_JSON));
+    }
+
+    public Response getConfig(String cronName)
+    {
+        String url = getContextBaseUrl() +
+                     "/cron?" +
+                     "name=" + cronName;
 
         WebTarget resource = getClientInstance().target(url);
         setupAuthentication(resource);
 
-        Response response = resource.request().delete();
+        return resource.request(MediaType.APPLICATION_JSON).get();
+    }
 
-        handleFailures(response, "Failed to delete artifact!");
+    public Response uploadScript(String cronName, String fileName, InputStream is)
+    {
+        String path = getContextBaseUrl() + "/cron/groovy?cronName=" + cronName;
 
-        return response;
+        String contentDisposition = "attachment; filename=\"" + fileName + "\"";
+
+        WebTarget resource = getClientInstance().target(path);
+        setupAuthentication(resource);
+        return resource.request(MediaType.APPLICATION_OCTET_STREAM)
+                       .header("Content-Disposition", contentDisposition)
+                       .header("fileName", fileName)
+                       .put(Entity.entity(is, MediaType.APPLICATION_OCTET_STREAM));
+
+    }
+
+    public Response getGroovyScriptsName() {
+        String url = getContextBaseUrl() +
+                    "/groovy/names";
+        WebTarget resource = getClientInstance().target(url);
+        setupAuthentication(resource);
+
+        return resource.request(MediaType.APPLICATION_JSON).get();
+    }
+
+    public Response delete(String cronName)
+    {
+        String url = getContextBaseUrl() + "/cron?name=" + cronName;
+
+        WebTarget resource = getClientInstance().target(url);
+        setupAuthentication(resource);
+
+        return resource.request().delete();
     }
 
     private void handleFailures(Response response, String message)
